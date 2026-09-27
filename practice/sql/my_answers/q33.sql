@@ -1,0 +1,11 @@
+-- Q33: Rule-based customer segments  [Hard]
+-- As of 2026-01-01, segment every customer with at least one valid order. Let orders = # valid orders and recency = days since their last valid order. Apply rules in this order:
+--   1. Champion: orders ≥ 4 and recency ≤ 90
+--   2. Loyal: orders ≥ 2 and recency ≤ 180
+--   3. At Risk: orders ≥ 2 (and recency > 180)
+--   4. New: orders = 1 and recency ≤ 90
+--   5. Lapsed One-timer: everyone else
+-- 
+-- Return segment, n_customers, avg_revenue (2 dp), largest segment first.
+-- Expected columns: segment, n_customers, avg_revenue
+

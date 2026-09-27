@@ -1,0 +1,31 @@
+employee_id,full_name,department,manager_id,hire_date,monthly_salary
+1,Rajesh Khanna,Leadership,,2018-04-01,450000
+2,Sunita Rao,Analytics,1,2019-06-15,260000
+3,Imran Qureshi,Marketing,1,2019-01-10,240000
+4,Lakshmi Iyer,Operations,1,2018-11-20,230000
+5,Arvind Menon,Engineering,1,2018-07-01,300000
+6,Neha Gupta,Analytics,2,2021-02-01,140000
+7,Karan Malhotra,Analytics,2,2022-07-18,110000
+8,Pooja Shah,Analytics,2,2023-01-09,95000
+9,Farhan Ali,Analytics,6,2024-06-03,75000
+10,Riya Das,Analytics,6,2024-06-03,75000
+11,Vikram Singh,Marketing,3,2020-03-16,150000
+12,Tanvi Joshi,Marketing,3,2022-09-05,105000
+13,Aman Verma,Marketing,11,2023-11-13,80000
+14,Simran Kaur,Marketing,11,2024-02-19,80000
+15,Deepak Yadav,Operations,4,2019-08-26,120000
+16,Meera Pillai,Operations,4,2021-05-10,98000
+17,Rohit Mishra,Operations,15,2022-12-01,62000
+18,Sneha Reddy,Operations,15,2023-04-17,60000
+19,Manish Agarwal,Operations,15,2025-01-06,58000
+20,Kavya Nair,Engineering,5,2019-10-01,210000
+21,Nikhil Bose,Engineering,5,2020-08-24,195000
+22,Isha Kapoor,Engineering,20,2022-03-14,160000
+23,Arjun Patel,Engineering,20,2023-07-03,140000
+24,Diya Chopra,Engineering,21,2024-01-22,125000
+25,Sai Krishnan,Engineering,21,2025-03-10,125000
+26,Harpreet Gill,Customer Support,4,2020-01-13,90000
+27,Zoya Sheikh,Customer Support,26,2023-06-12,45000
+28,Rahul Kumar,Customer Support,26,2024-09-02,42000
+29,Priya Sharma,Customer Support,26,2025-05-19,42000
+30,Ananya Banerjee,Analytics,2,2025-08-04,95000
