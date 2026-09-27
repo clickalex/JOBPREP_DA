@@ -44,15 +44,15 @@ fact["is_first_order"] = (fact["order_ts"] == fact["customer_id"].map(first)).as
 fact = fact[["order_item_id", "order_id", "date_key", "customer_id", "product_id", "status", "payment_method",
              "device", "coupon_code", "quantity", "unit_price", "gross_amount", "discount", "net_revenue", "cogs",
              "shipping_fee", "is_valid", "is_first_order"]]
-fact.to_csv(OUT / "fact_sales.csv", index=False)
+fact.to_csv(OUT / "fact_sales.csv", index=False, lineterminator="\n")
 
 # ---------------------------------------------------------------- dims
 dim_c = customers.drop(columns=["email", "first_name", "last_name"]).copy()
 dim_c["age_band"] = pd.cut(2025 - dim_c["birth_year"], [0, 24, 34, 44, 120], labels=["18-24", "25-34", "35-44", "45+"])
 dim_c["first_order_date"] = dim_c["customer_id"].map(first).dt.date
 dim_c["cohort_month"] = dim_c["customer_id"].map(first).dt.strftime("%Y-%m")
-dim_c.to_csv(OUT / "dim_customer.csv", index=False)
-products.to_csv(OUT / "dim_product.csv", index=False)
+dim_c.to_csv(OUT / "dim_customer.csv", index=False, lineterminator="\n")
+products.to_csv(OUT / "dim_product.csv", index=False, lineterminator="\n")
 
 dates = pd.date_range("2024-01-01", "2025-12-31", freq="D")
 fy_start = np.where(dates.month >= 4, dates.year, dates.year - 1)
@@ -67,7 +67,7 @@ dim_d = pd.DataFrame({
     "is_festive_season": (((dates >= "2024-10-15") & (dates <= "2024-11-05")) |
                           ((dates >= "2025-10-05") & (dates <= "2025-10-25"))).astype(int),
 })
-dim_d.to_csv(OUT / "dim_date.csv", index=False)
+dim_d.to_csv(OUT / "dim_date.csv", index=False, lineterminator="\n")
 
 # ---------------------------------------------------------------- preview mock-up
 v = fact[fact.is_valid == 1].merge(dim_d[["date_key", "year_month", "year"]], on="date_key") \

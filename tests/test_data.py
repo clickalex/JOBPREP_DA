@@ -64,6 +64,8 @@ def test_generator_is_deterministic(tmp_path):
     for t in TABLES:   # compare content, not bytes (page layout can differ between SQLite versions)
         q = f"SELECT * FROM {t} ORDER BY 1"
         assert a.execute(q).fetchall() == b.execute(q).fetchall(), t
+    a.close()
+    b.close()   # Windows can't delete the temp folder while the file is open
 
 
 @pytest.mark.parametrize("f", ["customers_raw.csv", "orders_raw.csv", "order_items_raw.csv"])
