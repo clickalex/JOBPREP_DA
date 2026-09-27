@@ -4,6 +4,11 @@
 [SQL Playground](https://clickalex.github.io/JOBPREP_DA/playground/) (Scratchpad mode) works with zero setup. These
 questions are **not** in the 40 practice exercises, so they're fresh even if you've done the whole set.
 
+**Practising alone?** Open the playground's **timed mock mode**
+([playground ▸ ⏱ Start timed mock](https://clickalex.github.io/JOBPREP_DA/playground/#m1)). It serves these same
+questions against a 45-minute clock, grades your queries, reveals the hints below one at a time, asks the
+follow-ups after each solve, and ends with a scorecard.
+
 **Interviewer:** read the prompt as written. Give hints only when the candidate has been stuck for 2+ minutes, one
 hint at a time. Aim for Q1–Q4 in the first 30 minutes; Q5–Q7 are stretch goals. Note the time each question takes.
 
@@ -226,7 +231,8 @@ Paid Social is weakest at **every** step, but the gap widens further down the fu
 
 > "List employees who earn more than their manager."
 
-**Looking for:** a self-join `employees e JOIN employees m ON m.employee_id = e.manager_id`. The trap is the result:
+**Looking for:** a self-join `employees e JOIN employees m ON m.employee_id = e.manager_id`, and a calm,
+verified reaction to whatever the result turns out to be.
 
 <details><summary>Answer key</summary>
 

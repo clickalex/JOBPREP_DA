@@ -23,7 +23,9 @@ knowing any SQL. Every number in the answer keys was produced by running queries
 5. **Repeat weekly** from week 6 of the [8-week plan in the main README](../README.md). Swap roles with a study partner;
    interviewing others teaches you what good answers sound like.
 
-Solo? Record yourself (screen + voice), set a timer, then grade the recording the next day with the rubric.
+Solo? The live SQL round has a **timed, auto-graded version in the
+[SQL Playground](https://clickalex.github.io/JOBPREP_DA/playground/#m1)** (hints, follow-ups and a scorecard included).
+For the other rounds, record yourself (screen + voice), set a timer, and grade the recording the next day with the rubric.
 
 ## Universal scoring rubric (1–4 per dimension)
 

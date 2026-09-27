@@ -91,6 +91,18 @@ def test_playground_json_matches_question_bank(staged):
     assert all(q["expected"]["columns"] and "<p>" in q["prompt_html"] for q in data)
 
 
+def test_mock_interview_questions_extracted():
+    import sqlite3
+    mock = site.extract_mock_questions()
+    assert [q["id"] for q in mock] == [f"m{i}" for i in range(1, 8)]
+    con = sqlite3.connect(ROOT / "data" / "shopkart.db")
+    for q in mock:
+        assert q["prompt_html"].startswith("<p>") and q["hints"] and q["minutes"] > 0, q["id"]
+        con.execute(q["solution"]).fetchall()          # answer-key SQL runs
+    assert sum(len(q["followups"]) for q in mock) >= 5
+    assert all(f["answer"] for q in mock for f in q["followups"]), "every follow-up needs a model answer"
+
+
 def test_staged_links_point_somewhere_valid(staged):
     for md in staged.rglob("*.md"):
         for target in links(md):

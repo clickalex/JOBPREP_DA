@@ -48,3 +48,15 @@
 .fc-card.fc-back { border-color: var(--md-accent-fg-color); }
 .fc-meta { display: flex; justify-content: space-between; margin-top: .6rem; font-size: .7rem; color: var(--md-default-fg-color--light); }
 .fc-controls .md-button { padding: .3em .9em; font-size: .7rem; cursor: pointer; }
+
+/* Mock-interview mode */
+.pg-mock { background: #6a1b9a; }
+.pg-quote { border-left: 4px solid var(--md-accent-fg-color); padding: .1rem .8rem; margin: .4rem 0; font-style: italic; }
+.pg-hints .pg-hint { background: var(--md-default-fg-color--lightest); border-radius: .2rem; padding: .4rem .7rem; margin: .3rem 0; font-size: .75rem; }
+.pg-hints .pg-hint p { display: inline; margin: 0; }
+.pg-followups { border: 1px solid var(--md-accent-fg-color); border-radius: .3rem; padding: .3rem .9rem .6rem; margin-bottom: 1rem; }
+.pg-followups details { font-size: .75rem; margin: .2rem 0 .6rem; }
+.pg-clock { font-variant-numeric: tabular-nums; font-weight: 700; font-size: .9rem; }
+.pg-clock-low { color: #c62828; }
+.pg-timer-btn { padding: .3em .9em !important; font-size: .7rem !important; cursor: pointer; }
+.pg-mock-running .pg-select { border-color: var(--md-accent-fg-color); }

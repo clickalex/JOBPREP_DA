@@ -115,9 +115,53 @@ def build_playground():
     dst = STAGE / "playground"
     dst.mkdir(parents=True, exist_ok=True)
     (dst / "questions.json").write_text(json.dumps(out, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+    mock = extract_mock_questions()
+    for q in mock:
+        cur = con.execute(q["solution"])
+        q["expected"] = {"columns": [d[0] for d in cur.description], "rows": [list(r) for r in cur.fetchall()]}
+    (dst / "mock.json").write_text(json.dumps(mock, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     shutil.copy2(ROOT / "data" / "shopkart.db", dst / "shopkart.db")
     shutil.copy2(HERE / "pages" / "playground.md", dst / "index.md")
     return len(out)
+
+
+MOCK_MD = ROOT / "mock-interviews" / "01-live-sql-round.md"
+
+
+def extract_mock_questions(path: Path = MOCK_MD) -> list[dict]:
+    """Turn the live-SQL-round interviewer script into playground questions (single source of truth: the markdown)."""
+    import markdown
+
+    def md(t):
+        return markdown.markdown(t.strip())
+
+    text = path.read_text(encoding="utf-8")
+    sections = re.split(r"^## (?=Q\d+ · )", text, flags=re.M)[1:]
+    out = []
+    for sec in sections:
+        sec = sec.split("\n---", 1)[0]
+        head = re.match(r"Q(\d+) · (.+?)\s*\((?:stretch, )?≈(\d+) min\)", sec)
+        num, title, minutes = int(head.group(1)), head.group(2).strip(), int(head.group(3))
+        quote = " ".join(ln[2:].strip() for ln in sec.splitlines() if ln.startswith("> "))
+        bullets = re.findall(r"^- \*\*(Hint[^:]*|Follow-up[^:]*):\*\* (.+?)(?=^- \*\*|^\s*$)", sec, flags=re.M | re.S)
+        hints, followups = [], []
+        for label, body in bullets:
+            body = " ".join(body.split())
+            if label.startswith("Hint"):
+                hints.append(md(body.strip('"')))
+            else:
+                m = re.match(r'^"(.+?)"\s*(?:\((.*)\))?$', body, flags=re.S)
+                q_part, a_part = (m.group(1), m.group(2) or "") if m else (body, "")
+                followups.append({"question": md(q_part), "answer": md(a_part) if a_part else ""})
+        looking = re.search(r"^\*\*Looking for:\*\* (.+?)(?=^\s*$)", sec, flags=re.M | re.S)
+        if looking:
+            hints.append("<p><b>What the interviewer is looking for:</b></p>" + md(" ".join(looking.group(1).split())))
+        answer = sec.split("<summary>Answer key</summary>", 1)[1]
+        solution = re.search(r"```sql\n(.+?)```", answer, flags=re.S).group(1).strip()
+        out.append({"id": f"m{num}", "level": "Mock", "title": title, "minutes": minutes,
+                    "topics": f"Live SQL round · ≈{minutes} min", "prompt_html": md(quote.strip('"')),
+                    "hints": hints, "followups": followups, "ordered": False, "solution": solution})
+    return out
 
 
 def strip_tags(s: str) -> str:

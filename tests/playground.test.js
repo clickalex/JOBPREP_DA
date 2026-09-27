@@ -28,6 +28,25 @@ const { grade, runSql } = require(path.join(ROOT, "website/assets/playground/gra
     if (!v.ok) fail(`Q${q.id} reference solution rejected: ${v.reason}`);
   }
 
+  // 1b. mock-interview questions (parsed from mock-interviews/01-live-sql-round.md) also pass,
+  //     including M7 whose correct answer is ZERO rows (db.exec() would drop its column names)
+  const mock = JSON.parse(fs.readFileSync(path.join(STAGE, "mock.json"), "utf8"));
+  assert.strictEqual(mock.length, 7, "expected 7 mock questions");
+  for (const m of mock) {
+    const v = grade(runSql(db, m.solution), m.expected, m.ordered);
+    if (!v.ok) fail(`${m.id} mock solution rejected: ${v.reason}`);
+    if (!m.hints.length) fail(`${m.id} has no hints`);
+  }
+  const m7 = mock.find((m) => m.id === "m7");
+  if (m7.expected.rows.length !== 0 || m7.expected.columns.length !== 4) fail("m7 should expect 4 columns and 0 rows");
+  const empty = runSql(db, "SELECT employee_id, full_name FROM employees WHERE 0");
+  if (empty.columns.length !== 2) fail("runSql must keep column names for empty results");
+  if (grade(runSql(db, "SELECT 1, 2, 3, 4 FROM employees WHERE 0"), m7.expected, false).ok !== true) fail("empty 4-col result should pass m7");
+  if (grade(runSql(db, "SELECT 1, 2 FROM employees WHERE 0"), m7.expected, false).ok) fail("empty 2-col result must fail m7");
+  // last statement wins, and non-SELECT statements don't clobber the result
+  const multi = runSql(db, "SELECT 1 AS a; SELECT 2 AS b, 3 AS c;");
+  if (multi.columns.join() !== "b,c") fail("multi-statement: last SELECT should be returned");
+
   // 2. wrong answers are rejected, each for the right reason
   const q = (id) => questions.find((x) => x.id === id);
   const expectFail = (label, result, question, pattern) => {
@@ -62,5 +81,5 @@ const { grade, runSql } = require(path.join(ROOT, "website/assets/playground/gra
   assert.throws(() => runSql(db, "SELEC nonsense"), /syntax error/);
 
   if (failures) { console.error(`\n${failures} playground check(s) failed`); process.exit(1); }
-  console.log(`playground OK: 40/40 reference solutions pass in sql.js; wrong answers rejected (sql.js SQLite ${db.exec("select sqlite_version()")[0].values[0][0]})`);
+  console.log(`playground OK: 40/40 practice + 7/7 mock solutions pass in sql.js; wrong answers rejected (sql.js SQLite ${db.exec("select sqlite_version()")[0].values[0][0]})`);
 })().catch((e) => { console.error(e); process.exit(1); });

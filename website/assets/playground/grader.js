@@ -72,11 +72,29 @@
     return { ok: false, reason: "Values differ from the expected result." };
   }
 
-  /** Run possibly-multiple statements and return the LAST result set (or an empty one). */
+  /**
+   * Run possibly-multiple statements and return the LAST result set (or an empty one).
+   * Uses iterateStatements rather than db.exec(): exec() drops result sets with zero rows, so a
+   * correct query whose answer is "no rows" would lose its column names and be graded as wrong.
+   */
   function runSql(db, sql) {
-    var res = db.exec(sql);
-    if (!res.length) return { columns: [], values: [] };
-    return res[res.length - 1];
+    var last = { columns: [], values: [] };
+    if (typeof db.iterateStatements !== "function") {   // very old sql.js
+      var res = db.exec(sql);
+      return res.length ? res[res.length - 1] : last;
+    }
+    var it = db.iterateStatements(sql), step, stmt;
+    while (!(step = it.next()).done) {
+      stmt = step.value;
+      try {
+        var cols = stmt.getColumnNames(), values = [];
+        while (stmt.step()) values.push(stmt.get());
+        if (cols.length) last = { columns: cols, values: values };
+      } finally {
+        stmt.free();
+      }
+    }
+    return last;
   }
 
   var api = { grade: grade, runSql: runSql, TOLERANCE: TOL };
