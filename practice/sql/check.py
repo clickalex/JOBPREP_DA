@@ -26,6 +26,11 @@ ANSWERS = HERE / "my_answers"
 sys.path.insert(0, str(HERE))
 from questions import QUESTIONS  # noqa: E402
 
+# Windows consoles/pipes default to cp1252, which can't print ✓ ✗ ₹ — force UTF-8.
+for _stream in (sys.stdout, sys.stderr):
+    if hasattr(_stream, "reconfigure"):
+        _stream.reconfigure(encoding="utf-8", errors="replace")
+
 GREEN, RED, YELLOW, DIM, RESET = "\033[32m", "\033[31m", "\033[33m", "\033[2m", "\033[0m"
 if not sys.stdout.isatty():
     GREEN = RED = YELLOW = DIM = RESET = ""
@@ -34,7 +39,7 @@ if not sys.stdout.isatty():
 def connect() -> sqlite3.Connection:
     if not DB.exists():
         sys.exit(f"Database not found at {DB}. Run: python data/generate_data.py")
-    return sqlite3.connect(f"file:{DB}?mode=ro", uri=True)
+    return sqlite3.connect(DB.resolve().as_uri() + "?mode=ro", uri=True)
 
 
 def normalise(rows, ordered: bool):
@@ -68,7 +73,7 @@ def preview(cols, rows, limit=8):
 
 def check(con, q: dict, show: bool) -> str:
     path = ANSWERS / f"q{q['id']:02d}.sql"
-    user_sql = strip_comments(path.read_text()) if path.exists() else ""
+    user_sql = strip_comments(path.read_text(encoding="utf-8-sig")) if path.exists() else ""
     if not user_sql:
         return "todo"
     exp_cols, exp_rows = run(con, q["solution"])

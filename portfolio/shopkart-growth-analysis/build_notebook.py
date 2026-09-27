@@ -6,6 +6,7 @@ Builds and executes analysis.ipynb (and exports charts to figures/).
 Editing tip: change the cells below, re-run this script, and the notebook,
 outputs and figures are regenerated in one go.
 """
+import sys
 from pathlib import Path
 
 import nbformat as nbf
@@ -53,6 +54,11 @@ PROJECT = Path.cwd()
 ROOT = PROJECT.parents[1]
 sys.path.insert(0, str(PROJECT / "src"))
 from cleaning import run as run_cleaning
+
+# Windows consoles/pipes default to cp1252, which can't print ✓ ✗ ₹ — force UTF-8.
+for _stream in (sys.stdout, sys.stderr):
+    if hasattr(_stream, "reconfigure"):
+        _stream.reconfigure(encoding="utf-8", errors="replace")
 
 FIG = PROJECT / "figures"; FIG.mkdir(exist_ok=True)
 pd.set_option("display.float_format", lambda v: f"{v:,.2f}")

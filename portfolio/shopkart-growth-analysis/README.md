@@ -29,7 +29,7 @@ SQL & pandas analysis → an A/B test readout → sized recommendations → a BI
 
 ## 1. Data cleaning
 
-The raw exports had 17 kinds of issues. Each one was fixed by a logged rule in [`src/cleaning.py`](src/cleaning.py), and
+The raw exports had 14 kinds of issues. Each one was handled by a logged rule in [`src/cleaning.py`](src/cleaning.py), and
 referential-integrity checks confirm nothing was broken along the way.
 
 | Table | Issue | Rows | Action |
@@ -140,7 +140,7 @@ Recruiters see a lot of copied projects, so change this one before you show it:
 
 ### Resume bullets (adapt the wording)
 
-* Cleaned and validated 40k+ rows across 4 source tables (17 data-quality rules, reconciled to within 0.002%), then analysed 2 years of e-commerce data with **SQL and pandas**.
+* Cleaned and validated 40k+ rows across 4 source tables (14 logged data-quality rules + 3 integrity checks, reconciled to within 0.002%), then analysed 2 years of e-commerce data with **SQL and pandas**.
 * Found that Fashion produced **46% of gross profit on 32% of revenue** despite a 16% return rate, and sized a ₹2.3 L/yr returns-reduction opportunity.
 * Analysed a **24k-visitor A/B test** (z-test, 95% CI, SRM check): recommended an App-only rollout worth an estimated **₹14 L/yr** and a follow-up test for web.
 * Built a star-schema **Power BI** dashboard (15+ DAX measures including YoY and cohort retention) that surfaces a regional logistics incident (6x normal cancellations) within a single drill-down.

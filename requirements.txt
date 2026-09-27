@@ -1,5 +1,5 @@
 # Core (everything in the repo)
-pandas>=2.0
+pandas>=2.2          # notebook uses groupby.apply(include_groups=...)
 numpy>=1.24
 matplotlib>=3.7
 scipy>=1.10

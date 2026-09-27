@@ -1,0 +1,96 @@
+# GitHub Pages site. Build locally with:
+#   python website/build_site.py && mkdocs serve -f website/mkdocs.yml
+site_name: JOBPREP_DA · Data Analyst Interview Prep
+site_description: Study guide, auto-graded SQL/Python/Excel practice, an in-browser SQL playground and a portfolio project for entry-level data analyst interviews.
+# The Pages workflow sets these from the repository, so forks deploy to their own URL without edits.
+site_url: !ENV [SITE_URL, "https://clickalex.github.io/JOBPREP_DA/"]
+repo_url: !ENV [REPO_URL, "https://github.com/clickalex/JOBPREP_DA"]
+repo_name: !ENV [REPO_NAME, "clickalex/JOBPREP_DA"]
+edit_uri: ""            # pages are staged copies, so "edit this page" links would point to the wrong file
+docs_dir: _build_docs
+site_dir: _site
+copyright: Code MIT-licensed · ShopKart is a fictional company; all data is synthetic.
+
+theme:
+  name: material
+  language: en
+  icon:
+    logo: material/chart-box-outline
+    repo: fontawesome/brands/github
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: deep orange
+      toggle: { icon: material/weather-night, name: Switch to dark mode }
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: deep orange
+      toggle: { icon: material/weather-sunny, name: Switch to light mode }
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - navigation.footer
+    - navigation.indexes
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - toc.follow
+
+markdown_extensions:
+  - tables
+  - admonition
+  - attr_list
+  - md_in_html
+  - footnotes
+  - toc: { permalink: true }
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight: { anchor_linenums: true }
+  - pymdownx.inlinehilite
+  - pymdownx.tasklist: { custom_checkbox: true }
+
+plugins:
+  - search
+
+nav:
+  - Home: README.md
+  - Study guide:
+      - SQL: study-guide/01-sql.md
+      - Excel: study-guide/02-excel.md
+      - Statistics & A/B testing: study-guide/03-statistics.md
+      - Python & pandas: study-guide/04-python-pandas.md
+      - Power BI & Tableau: study-guide/05-bi-powerbi-tableau.md
+      - Business metrics & cases: study-guide/06-business-metrics-and-case-studies.md
+      - Behavioral & job search: study-guide/07-behavioral-and-job-search.md
+  - Practice:
+      - SQL Playground (in browser): playground/index.md
+      - SQL exercises: practice/sql/EXERCISES.md
+      - SQL solutions: practice/sql/SOLUTIONS.md
+      - SQL checker (local): practice/sql/README.md
+      - Python & pandas: practice/python/README.md
+      - Excel workbook: practice/excel/README.md
+      - Flashcards: flashcards/index.md
+  - Mock interviews:
+      - Overview: mock-interviews/README.md
+      - Live SQL round: mock-interviews/01-live-sql-round.md
+      - Case round: mock-interviews/02-case-round.md
+      - Take-home assignment: mock-interviews/03-take-home-assignment.md
+      - Stats rapid-fire: mock-interviews/04-stats-rapid-fire.md
+  - Portfolio project:
+      - Case study: portfolio/shopkart-growth-analysis/README.md
+      - Dashboard kit: portfolio/shopkart-growth-analysis/dashboard/README.md
+  - Data: data/README.md
+
+validation:
+  nav:
+    omitted_files: info
+    not_found: warn
+    absolute_links: info
+  links:
+    not_found: warn
+    anchors: warn
+    absolute_links: info
+    unrecognized_links: warn

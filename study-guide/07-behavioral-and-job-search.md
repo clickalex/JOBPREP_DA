@@ -97,3 +97,12 @@ with finance. · R: the numbers matched to the rupee; the reconciliation checkli
 - [ ] Researched the company: product, business model, likely KPIs, recent news
 - [ ] Three questions to ask them
 - [ ] Test your setup for virtual rounds (camera, mic, a quiet room, a notebook/SQL environment ready)
+
+## 10. Interview questions
+
+<details><summary><b>Why data analytics, and why now? (career switchers)</b></summary>Connect your past to the role in three beats: something in your previous work where data changed a decision → what you've done since to build the skills (projects, not just courses) → why this company's problems interest you. Avoid "I've always loved numbers".</details>
+<details><summary><b>Tell me about a time you found an insight that changed a decision.</b></summary>Use STAR with a number in the Result. If you're new to the field, use your portfolio: "In the ShopKart analysis I found 22% of sign-ups never ordered and Referral customers were worth 2.4x Paid Social; I recommended reallocating budget, sized at ~₹18 L a year."</details>
+<details><summary><b>Tell me about a time your analysis was wrong.</b></summary>They're testing honesty and process. Pick a real mistake (a double-counting join, a wrong filter), how you caught it, what you told the stakeholder, and the check you now always run (e.g. reconciling totals before sharing).</details>
+<details><summary><b>How do you handle a stakeholder who disagrees with your numbers?</b></summary>Assume good faith and get specific: compare definitions, filters and date ranges side by side, and reconcile to a shared source. Most disagreements are definition mismatches. Document the agreed definition so it doesn't recur.</details>
+<details><summary><b>How do you prioritise when three people need something "today"?</b></summary>Clarify the decision and deadline behind each request, estimate effort, then agree on an order with your manager or the requesters. Offer a quick partial answer where it unblocks someone. Communicate the plan rather than silently picking.</details>
+<details><summary><b>What's your expected salary?</b></summary>Research the band first (Glassdoor, AmbitionBox, LinkedIn, peers). If you can, let them share their range first: "What's the budgeted range for this role?" Otherwise give a researched range whose bottom you'd be happy with, and mention you're flexible for the right role and learning opportunity.</details>

@@ -16,11 +16,18 @@ Outputs (deterministic, seed=42):
 """
 from __future__ import annotations
 
+import sys
+
 import sqlite3
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
+
+# Windows consoles/pipes default to cp1252, which can't print ✓ ✗ ₹ — force UTF-8.
+for _stream in (sys.stdout, sys.stderr):
+    if hasattr(_stream, "reconfigure"):
+        _stream.reconfigure(encoding="utf-8", errors="replace")
 
 SEED = 42
 START = pd.Timestamp("2024-01-01")
@@ -446,18 +453,18 @@ def main():
               "order_items": items, "web_sessions": sessions,
               "checkout_experiment": experiment, "employees": employees}
     for name, df in tables.items():
-        df.to_csv(CLEAN / f"{name}.csv", index=False)
+        df.to_csv(CLEAN / f"{name}.csv", index=False, lineterminator="\n")
 
     c_raw, o_raw, i_raw = make_raw(customers, orders, items, products)
-    c_raw.to_csv(RAW / "customers_raw.csv", index=False)
-    o_raw.to_csv(RAW / "orders_raw.csv", index=False)
-    i_raw.to_csv(RAW / "order_items_raw.csv", index=False)
-    products.to_csv(RAW / "products.csv", index=False)
+    c_raw.to_csv(RAW / "customers_raw.csv", index=False, lineterminator="\n")
+    o_raw.to_csv(RAW / "orders_raw.csv", index=False, lineterminator="\n")
+    i_raw.to_csv(RAW / "order_items_raw.csv", index=False, lineterminator="\n")
+    products.to_csv(RAW / "products.csv", index=False, lineterminator="\n")
 
     if DB_PATH.exists():
         DB_PATH.unlink()
     con = sqlite3.connect(DB_PATH)
-    schema = (ROOT / "schema.sql").read_text()
+    schema = (ROOT / "schema.sql").read_text(encoding="utf-8")
     con.executescript(schema)
     for name, df in tables.items():
         df.to_sql(name, con, if_exists="append", index=False)

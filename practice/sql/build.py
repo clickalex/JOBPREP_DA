@@ -17,6 +17,11 @@ ROOT = HERE.parents[1]
 sys.path.insert(0, str(HERE))
 from questions import QUESTIONS  # noqa: E402
 
+# Windows consoles/pipes default to cp1252, which can't print ✓ ✗ ₹ — force UTF-8.
+for _stream in (sys.stdout, sys.stderr):
+    if hasattr(_stream, "reconfigure"):
+        _stream.reconfigure(encoding="utf-8", errors="replace")
+
 HEADER = """\
 > **Conventions (apply to every question)**
 > * **Net line revenue** = `quantity * unit_price - discount` (INR, from `order_items`)
@@ -71,10 +76,10 @@ def main():
             prompt = q["prompt"].replace("**", "").replace("*", "").replace("`", "")
             wrapped = "\n".join("-- " + line for line in prompt.splitlines())
             starter.write_text(f"-- Q{q['id']:02d}: {q['title']}  [{q['level']}]\n{wrapped}\n"
-                               f"-- Expected columns: {', '.join(cols)}\n\n")
+                               f"-- Expected columns: {', '.join(cols)}\n\n", encoding="utf-8")
 
-    (HERE / "EXERCISES.md").write_text("\n".join(ex) + "\n")
-    (HERE / "SOLUTIONS.md").write_text("\n".join(sol) + "\n")
+    (HERE / "EXERCISES.md").write_text("\n".join(ex) + "\n", encoding="utf-8")
+    (HERE / "SOLUTIONS.md").write_text("\n".join(sol) + "\n", encoding="utf-8")
     print(f"Wrote EXERCISES.md, SOLUTIONS.md and starters for {len(QUESTIONS)} questions.")
 
 

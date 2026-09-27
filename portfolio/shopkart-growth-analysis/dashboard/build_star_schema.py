@@ -8,12 +8,18 @@ Writes dashboard/model/*.csv:
     dim_customer.csv   dim_product.csv   dim_date.csv (continuous calendar, Indian FY)
 and dashboard/dashboard_preview.png (a mock-up of the Executive Overview page).
 """
+import sys
 from pathlib import Path
 
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
 import numpy as np
 import pandas as pd
+
+# Windows consoles/pipes default to cp1252, which can't print ✓ ✗ ₹ — force UTF-8.
+for _stream in (sys.stdout, sys.stderr):
+    if hasattr(_stream, "reconfigure"):
+        _stream.reconfigure(encoding="utf-8", errors="replace")
 
 HERE = Path(__file__).resolve().parent
 CLEAN = HERE.parents[2] / "data" / "clean"

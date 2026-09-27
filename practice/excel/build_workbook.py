@@ -16,6 +16,8 @@ of the Tasks sheet so each answer cell can grade itself.
 """
 from __future__ import annotations
 
+import sys
+
 from pathlib import Path
 
 import pandas as pd
@@ -24,6 +26,11 @@ from openpyxl.formatting.rule import CellIsRule, FormulaRule
 from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
 from openpyxl.utils import get_column_letter
 from openpyxl.worksheet.table import Table, TableStyleInfo
+
+# Windows consoles/pipes default to cp1252, which can't print ✓ ✗ ₹ — force UTF-8.
+for _stream in (sys.stdout, sys.stderr):
+    if hasattr(_stream, "reconfigure"):
+        _stream.reconfigure(encoding="utf-8", errors="replace")
 
 HERE = Path(__file__).resolve().parent
 DATA = HERE.parents[1] / "data" / "clean"
@@ -102,7 +109,7 @@ def tasks():
         (8, "MAXIFS",
          "Largest single Line Revenue in Home & Kitchen?",
          "num", "MAXIFS(max_range, criteria_range, criteria)  (Excel 2019+)",
-         f'=MAXIFS({REV},{CAT},"Home & Kitchen")'),
+         f'=_xlfn.MAXIFS({REV},{CAT},"Home & Kitchen")'),   # post-2007 functions need _xlfn. in the file
         (9, "Dates in criteria",
          "Valid net revenue for November 2025?",
          "num", "Use \">=\"&DATE(2025,11,1) and \"<\"&DATE(2025,12,1) as criteria on order_date",
@@ -341,7 +348,7 @@ def build():
         ws_a.cell(row=r, column=1, value=tid)
         c = ws_a.cell(row=r, column=2, value=formula)
         c.number_format = "0.0%" if kind == "pct" else ("#,##0.00" if kind == "num" else "General")
-        text_cell(ws_a, r, 3, formula.replace(R, "")).font = Font(name="Consolas", size=9, color="404040")
+        text_cell(ws_a, r, 3, formula.replace(R, "").replace("_xlfn.", "")).font = Font(name="Consolas", size=9, color="404040")
     # helper tables for tasks 14 and 17
     ws_a["H3"], ws_a["I3"] = "city", "valid revenue"
     ws_a["K3"], ws_a["L3"] = "weekday", "order lines"

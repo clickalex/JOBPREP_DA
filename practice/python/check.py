@@ -22,6 +22,11 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 from data_loader import load_clean, load_raw  # noqa: E402
 
+# Windows consoles/pipes default to cp1252, which can't print ✓ ✗ ₹ — force UTF-8.
+for _stream in (sys.stdout, sys.stderr):
+    if hasattr(_stream, "reconfigure"):
+        _stream.reconfigure(encoding="utf-8", errors="replace")
+
 GREEN, RED, DIM, YELLOW, RESET = "\033[32m", "\033[31m", "\033[2m", "\033[33m", "\033[0m"
 if not sys.stdout.isatty():
     GREEN = RED = DIM = YELLOW = RESET = ""

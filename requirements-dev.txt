@@ -1,0 +1,8 @@
+# Everything needed to run the full test suite and build the website:
+#   pip install -r requirements-dev.txt
+#   pytest            # fast checks (~20 s)
+#   pytest -m slow    # Excel formula evaluation + notebook execution (~2 min)
+-r requirements.txt
+-r website/requirements.txt
+pytest>=8
+formulas>=1.2      # Excel calculation engine used to verify the Answer Key formulas

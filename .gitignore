@@ -13,3 +13,7 @@ Thumbs.db
 ~$*.xlsx
 # Power BI / Tableau local caches (commit your .pbix/.twbx deliberately if you want them)
 *.pbix.bak
+
+# Website build output (python website/build_site.py && mkdocs build)
+website/_build_docs/
+website/_site/
