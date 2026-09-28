@@ -1,0 +1,14 @@
+# Core (everything in the repo)
+pandas>=2.2          # notebook uses groupby.apply(include_groups=...)
+numpy>=1.24
+matplotlib>=3.7
+scipy>=1.10
+openpyxl>=3.1          # Excel workbook builder
+# Notebooks
+jupyter
+nbformat
+nbconvert
+ipykernel
+# Optional
+statsmodels            # proportions_ztest, regression (used in the statistics guide examples)
+seaborn                # nicer statistical charts

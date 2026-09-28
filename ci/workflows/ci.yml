@@ -1,0 +1,87 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Tests · ${{ matrix.os }} · Python ${{ matrix.python }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { os: ubuntu-latest,  python: "3.10" }
+          - { os: ubuntu-latest,  python: "3.12" }
+          - { os: ubuntu-latest,  python: "3.13" }
+          - { os: windows-latest, python: "3.12" }
+          - { os: macos-latest,   python: "3.12" }
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: ${{ matrix.python }}
+          cache: pip
+          cache-dependency-path: |
+            requirements.txt
+            requirements-dev.txt
+            website/requirements.txt
+      - uses: actions/setup-node@v7      # runs the browser-playground grader test against sql.js
+        with:
+          node-version: 22
+      - name: Install dependencies
+        run: python -m pip install -r requirements-dev.txt
+      - name: Run tests
+        run: python -m pytest
+      - name: Progress script smoke test
+        run: python progress.py
+
+  generated-files:
+    name: Generated files are up to date
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: |
+            requirements.txt
+            requirements-dev.txt
+            website/requirements.txt
+      - run: python -m pip install -r requirements-dev.txt
+      - name: Regenerate data, SQL exercise docs and flashcards
+        run: |
+          python data/generate_data.py
+          python practice/sql/build.py
+          python website/build_site.py
+      - name: Fail if anything changed (commit the regenerated files)
+        # shopkart.db is compared by content in tests/test_data.py: its bytes vary with the SQLite version
+        run: git diff --stat --exit-code -- . ':(exclude)data/shopkart.db'
+
+  slow:
+    name: Slow checks · Excel formulas + notebook
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: |
+            requirements.txt
+            requirements-dev.txt
+            website/requirements.txt
+      - run: python -m pip install -r requirements-dev.txt
+      - name: Evaluate every Excel Answer Key formula and execute the portfolio notebook
+        run: python -m pytest -m slow

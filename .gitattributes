@@ -1,0 +1,8 @@
+# Keep text files LF on every OS so data checksums and regenerated files match on Windows too
+* text=auto eol=lf
+*.bat text eol=crlf
+# Binary artefacts
+*.db binary
+*.xlsx binary
+*.png binary
+*.wasm binary

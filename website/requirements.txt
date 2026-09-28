@@ -1,0 +1,5 @@
+# Extra dependencies for building the GitHub Pages site (on top of ../requirements.txt)
+mkdocs>=1.6,<2               # MkDocs 2.0 drops the plugin/theme system Material depends on
+mkdocs-material>=9.5,<10
+pymdown-extensions>=10
+markdown>=3.5
