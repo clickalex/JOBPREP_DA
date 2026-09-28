@@ -15,7 +15,7 @@ const { grade, runSql } = require(path.join(ROOT, "website/assets/playground/gra
   const SQL = await initSqlJs({ locateFile: (f) => path.join(VENDOR, f) });
   const db = new SQL.Database(fs.readFileSync(path.join(STAGE, "shopkart.db")));
   const questions = JSON.parse(fs.readFileSync(path.join(STAGE, "questions.json"), "utf8"));
-  assert.strictEqual(questions.length, 40, "expected 40 questions");
+  assert.strictEqual(questions.length, 60, "expected 60 questions");
 
   let failures = 0;
   const fail = (msg) => { failures++; console.error("FAIL " + msg); };
@@ -28,10 +28,10 @@ const { grade, runSql } = require(path.join(ROOT, "website/assets/playground/gra
     if (!v.ok) fail(`Q${q.id} reference solution rejected: ${v.reason}`);
   }
 
-  // 1b. mock-interview questions (parsed from mock-interviews/01-live-sql-round.md) also pass,
+  // 1b. mock-interview questions (parsed from the live-SQL-round markdown, 3 rounds) also pass,
   //     including M7 whose correct answer is ZERO rows (db.exec() would drop its column names)
   const mock = JSON.parse(fs.readFileSync(path.join(STAGE, "mock.json"), "utf8"));
-  assert.strictEqual(mock.length, 7, "expected 7 mock questions");
+  assert.strictEqual(mock.length, 19, "expected 19 mock questions (7 + 6 + 6)");
   for (const m of mock) {
     const v = grade(runSql(db, m.solution), m.expected, m.ordered);
     if (!v.ok) fail(`${m.id} mock solution rejected: ${v.reason}`);
@@ -43,6 +43,14 @@ const { grade, runSql } = require(path.join(ROOT, "website/assets/playground/gra
   if (empty.columns.length !== 2) fail("runSql must keep column names for empty results");
   if (grade(runSql(db, "SELECT 1, 2, 3, 4 FROM employees WHERE 0"), m7.expected, false).ok !== true) fail("empty 4-col result should pass m7");
   if (grade(runSql(db, "SELECT 1, 2 FROM employees WHERE 0"), m7.expected, false).ok) fail("empty 2-col result must fail m7");
+  // the curveball traps must be graded as wrong
+  const byTitle = (s) => mock.find((m) => m.title.includes(s));
+  const noManager = byTitle("manages nobody"), shipping = byTitle("shipping fees");
+  if (grade(runSql(db, "SELECT full_name, department FROM employees WHERE employee_id NOT IN (SELECT manager_id FROM employees)"), noManager.expected, false).ok)
+    fail("NOT IN + NULL trap (0 rows) must fail the 'manages nobody' question");
+  if (grade(runSql(db, "SELECT ROUND(SUM(o.shipping_fee), 2) FROM orders o JOIN order_items oi ON oi.order_id = o.order_id " +
+                       "WHERE o.status IN ('Delivered','Shipped') AND o.order_ts >= '2025-01-01' AND o.order_ts < '2026-01-01'"), shipping.expected, false).ok)
+    fail("fan-out (joined) shipping total must fail the shipping-fees question");
   // last statement wins, and non-SELECT statements don't clobber the result
   const multi = runSql(db, "SELECT 1 AS a; SELECT 2 AS b, 3 AS c;");
   if (multi.columns.join() !== "b,c") fail("multi-statement: last SELECT should be returned");
@@ -81,5 +89,5 @@ const { grade, runSql } = require(path.join(ROOT, "website/assets/playground/gra
   assert.throws(() => runSql(db, "SELEC nonsense"), /syntax error/);
 
   if (failures) { console.error(`\n${failures} playground check(s) failed`); process.exit(1); }
-  console.log(`playground OK: 40/40 practice + 7/7 mock solutions pass in sql.js; wrong answers rejected (sql.js SQLite ${db.exec("select sqlite_version()")[0].values[0][0]})`);
+  console.log(`playground OK: ${questions.length}/${questions.length} practice + ${mock.length}/${mock.length} mock solutions pass in sql.js; wrong answers rejected (sql.js SQLite ${db.exec("select sqlite_version()")[0].values[0][0]})`);
 })().catch((e) => { console.error(e); process.exit(1); });

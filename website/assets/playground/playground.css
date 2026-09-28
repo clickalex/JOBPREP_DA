@@ -60,3 +60,4 @@
 .pg-clock-low { color: #c62828; }
 .pg-timer-btn { padding: .3em .9em !important; font-size: .7rem !important; cursor: pointer; }
 .pg-mock-running .pg-select { border-color: var(--md-accent-fg-color); }
+.pg-round-select { flex: 0 1 17rem; }

@@ -94,7 +94,10 @@ def test_playground_json_matches_question_bank(staged):
 def test_mock_interview_questions_extracted():
     import sqlite3
     mock = site.extract_mock_questions()
-    assert [q["id"] for q in mock] == [f"m{i}" for i in range(1, 8)]
+    assert [q["id"] for q in mock] == [f"m{i}" for i in range(1, 20)]          # ids are global; round 1 keeps m1–m7
+    assert [q["round"] for q in mock] == [1] * 7 + [2] * 6 + [3] * 6
+    for r in (1, 2, 3):
+        assert [q["num"] for q in mock if q["round"] == r] == list(range(1, 8 if r == 1 else 7))
     con = sqlite3.connect(ROOT / "data" / "shopkart.db")
     for q in mock:
         assert q["prompt_html"].startswith("<p>") and q["hints"] and q["minutes"] > 0, q["id"]

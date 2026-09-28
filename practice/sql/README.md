@@ -1,11 +1,12 @@
-# SQL practice: 40 graded questions
+# SQL practice: 60 graded questions
 
 Every question runs against `data/shopkart.db` (SQLite). They go from `SELECT` basics to cohort retention, funnels,
-medians without `MEDIAN()`, market-basket pairs and an anomaly hunt.
+medians without `MEDIAN()`, market-basket pairs and an anomaly hunt. Set 2 (Q41–60) adds more reps plus new techniques:
+NULL counting, `NTILE`, pivots, recursive CTEs (date spines, org charts), gaps-and-islands streaks and before/after checks.
 
 | File | Purpose |
 |---|---|
-| [`EXERCISES.md`](EXERCISES.md) | The questions (12 Easy · 16 Medium · 12 Hard) |
+| [`EXERCISES.md`](EXERCISES.md) | The questions: set 1 (Q1–40: 12 Easy · 16 Medium · 12 Hard) and set 2 (Q41–60: 6 Easy · 8 Medium · 6 Hard) |
 | `my_answers/qNN.sql` | **Write your answers here.** One file per question, with the prompt as a comment |
 | `check.py` | Grades your answers by comparing *results* (not query text) with the reference |
 | [`SOLUTIONS.md`](SOLUTIONS.md) | Reference solutions + expected output. Try first! |

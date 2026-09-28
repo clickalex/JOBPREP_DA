@@ -1,4 +1,4 @@
-# SQL Practice — 40 interview-style questions
+# SQL Practice — 60 interview-style questions
 
 Database: `data/shopkart.db` (see the [data dictionary](../../data/README.md)). Write each answer in `my_answers/qNN.sql`, then grade yourself with `python practice/sql/check.py`.
 
@@ -53,6 +53,26 @@ Database: `data/shopkart.db` (see the [data dictionary](../../data/README.md)). 
 | [38](#q38) | Hard | Pivot with conditional aggregation, YoY | Diwali month, year over year |
 | [39](#q39) | Hard | Self-join for pairs (market basket) | Frequently bought together |
 | [40](#q40) | Hard | Business question end-to-end | Do welcome coupons create loyal customers? |
+| [41](#q41) | Easy | Conditional aggregation, share of total | Free-shipping orders |
+| [42](#q42) | Easy | NULLs: COUNT(*) vs COUNT(column) | Anonymous sessions |
+| [43](#q43) | Easy | CASE, strftime('%w') | Weekend vs weekday |
+| [44](#q44) | Easy | strftime, GROUP BY | Hiring by year |
+| [45](#q45) | Easy | CASE buckets, derived columns | Customers by age band |
+| [46](#q46) | Easy | strftime('%H'), LIMIT | Peak ordering hours |
+| [47](#q47) | Medium | Anti-join with NOT EXISTS | Lapsed 2024 buyers |
+| [48](#q48) | Medium | Pivot with conditional aggregation | Region × category pivot |
+| [49](#q49) | Medium | julianday, first-event logic | Days from sign-up to first order |
+| [50](#q50) | Medium | Two-level aggregation, rates | Repeat rate by channel |
+| [51](#q51) | Medium | NTILE, window functions | Spend quartiles |
+| [52](#q52) | Medium | Data quality: duplicates, LOWER/TRIM | Duplicate customer emails |
+| [53](#q53) | Medium | Running total | Cumulative sign-ups in 2025 |
+| [54](#q54) | Medium | Conditional aggregation over time | Coupon share by month |
+| [55](#q55) | Hard | Recursive CTE date spine | Quietest days of 2025 |
+| [56](#q56) | Hard | Recursive CTE hierarchy | Org chart levels |
+| [57](#q57) | Hard | Gaps and islands | Longest buying streak |
+| [58](#q58) | Hard | Sequence analysis, EXISTS with time condition | Electronics buyers who come back for Fashion |
+| [59](#q59) | Hard | Before/after comparison, data validation | Did the April 2025 price rise stick? |
+| [60](#q60) | Hard | YoY growth + RANK | Fastest-growing categories |
 
 ## Easy
 
@@ -348,4 +368,153 @@ Expected columns: `product_a, product_b, n_orders` · 5 row(s) · row order matt
 For customers whose first order (any status) was placed before **2025-07-01**, compare those whose first order used `WELCOME15` with those whose first order used no coupon. Return `first_order_type` ('WELCOME15' / 'No coupon'), `n_customers` and `repeat_180d_pct` = % who placed another order within 180 days of the first (1 dp). Ignore other coupon codes.
 
 Expected columns: `first_order_type, n_customers, repeat_180d_pct` · 2 row(s) · any row order
+
+
+## Set 2 · Easy
+
+### Q41
+**Free-shipping orders** · _Conditional aggregation, share of total_
+
+What share of **all** orders (any status) had no shipping fee (`shipping_fee = 0`)? Return `free_shipping_orders` and `pct_free_shipping` (1 decimal).
+
+Expected columns: `free_shipping_orders, pct_free_shipping` · 1 row(s) · any row order
+
+### Q42
+**Anonymous sessions** · _NULLs: COUNT(*) vs COUNT(column)_
+
+In `web_sessions`, `customer_id` is NULL when the visitor wasn't logged in. Return `sessions` (all rows), `logged_in_sessions`, `anonymous_sessions` and `pct_anonymous` (1 decimal), using the difference between `COUNT(*)` and `COUNT(column)`.
+
+Expected columns: `sessions, logged_in_sessions, anonymous_sessions, pct_anonymous` · 1 row(s) · any row order
+
+### Q43
+**Weekend vs weekday** · _CASE, strftime('%w')_
+
+Split all orders into `Weekend` (Saturday/Sunday) and `Weekday`. Return `day_type`, `orders` and `avg_orders_per_day` (orders ÷ number of distinct calendar dates of that type that had orders, 1 decimal), weekday first.
+
+Expected columns: `day_type, orders, avg_orders_per_day` · 2 row(s) · row order matters
+
+### Q44
+**Hiring by year** · _strftime, GROUP BY_
+
+How many employees were hired each year? Return `hire_year` and `hires`, oldest year first.
+
+Expected columns: `hire_year, hires` · 8 row(s) · row order matters
+
+### Q45
+**Customers by age band** · _CASE buckets, derived columns_
+
+Using age in 2025 (`2025 - birth_year`), bucket customers into `'18-24'`, `'25-34'`, `'35-44'` and `'45+'`. Return `age_band` and `customers`, youngest band first.
+
+Expected columns: `age_band, customers` · 4 row(s) · row order matters
+
+### Q46
+**Peak ordering hours** · _strftime('%H'), LIMIT_
+
+Which 3 hours of the day receive the most orders (any status)? Return `hour` (as `'00'`–`'23'`) and `orders`, busiest first.
+
+Expected columns: `hour, orders` · 3 row(s) · row order matters
+
+
+## Set 2 · Medium
+
+### Q47
+**Lapsed 2024 buyers** · _Anti-join with NOT EXISTS_
+
+Which customers placed a valid order in **2024** but **none in 2025**? Return `region` and `lapsed_customers`, most first.
+
+Expected columns: `region, lapsed_customers` · 4 row(s) · row order matters
+
+### Q48
+**Region × category pivot** · _Pivot with conditional aggregation_
+
+Build a 2025 revenue pivot: one row per customer `region`, with columns `electronics`, `fashion`, `home_kitchen`, `other` (all remaining categories) and `total`, rounded to 2 decimals, highest total first.
+
+Expected columns: `region, electronics, fashion, home_kitchen, other, total` · 4 row(s) · row order matters
+
+### Q49
+**Days from sign-up to first order** · _julianday, first-event logic_
+
+For customers with at least one valid order, how many days pass between `signup_date` and their first valid order? Return `acquisition_channel`, `buyers` and `avg_days_to_first_order` (1 decimal), fastest channel first.
+
+Expected columns: `acquisition_channel, buyers, avg_days_to_first_order` · 6 row(s) · row order matters
+
+### Q50
+**Repeat rate by channel** · _Two-level aggregation, rates_
+
+Among customers with at least one valid order, what percentage placed **two or more** valid orders? Return `acquisition_channel`, `buyers`, `repeat_buyers`, `repeat_rate_pct` (1 decimal), highest rate first.
+
+Expected columns: `acquisition_channel, buyers, repeat_buyers, repeat_rate_pct` · 6 row(s) · row order matters
+
+### Q51
+**Spend quartiles** · _NTILE, window functions_
+
+Rank buyers by lifetime valid revenue and split them into 4 equal-sized groups with `NTILE(4)` (quartile 1 = top spenders). Return `quartile`, `customers`, `min_spend`, `max_spend` and `pct_of_revenue` (1 decimal).
+
+Expected columns: `quartile, customers, min_spend, max_spend, pct_of_revenue` · 4 row(s) · row order matters
+
+### Q52
+**Duplicate customer emails** · _Data quality: duplicates, LOWER/TRIM_
+
+Some people signed up twice. After normalising emails with `LOWER(TRIM(email))`, how many email addresses appear on more than one customer record, and how many records do they cover? Return `duplicated_emails` and `records_involved`.
+
+Expected columns: `duplicated_emails, records_involved` · 1 row(s) · any row order
+
+### Q53
+**Cumulative sign-ups in 2025** · _Running total_
+
+Show 2025 sign-ups per month and the running total. Return `month` (`YYYY-MM`), `signups`, `cumulative_signups`.
+
+Expected columns: `month, signups, cumulative_signups` · 12 row(s) · row order matters
+
+### Q54
+**Coupon share by month** · _Conditional aggregation over time_
+
+For each month of 2025, what share of valid orders used any coupon? Return `month`, `orders`, `coupon_orders`, `coupon_pct` (1 decimal).
+
+Expected columns: `month, orders, coupon_orders, coupon_pct` · 12 row(s) · row order matters
+
+
+## Set 2 · Hard
+
+### Q55
+**Quietest days of 2025** · _Recursive CTE date spine_
+
+Days with **zero** orders don't appear in `orders`, so a plain GROUP BY hides them. Build a calendar of every date in 2025 with a recursive CTE, LEFT JOIN valid orders, and return the 5 dates with the fewest valid orders: `day`, `valid_orders` (fewest first, then earliest date).
+
+Expected columns: `day, valid_orders` · 5 row(s) · row order matters
+
+### Q56
+**Org chart levels** · _Recursive CTE hierarchy_
+
+Walk the reporting hierarchy with a recursive CTE, starting from the employee with no manager (level 0). Return `level`, `employees` and `avg_salary` (whole rupees) for each level, top of the org first.
+
+Expected columns: `level, employees, avg_salary` · 4 row(s) · row order matters
+
+### Q57
+**Longest buying streak** · _Gaps and islands_
+
+A **streak** is a run of consecutive calendar months in which a customer placed at least one valid order. Find each customer's longest streak, then return the distribution: `streak_months` and `customers`, longest streak first.
+
+Expected columns: `streak_months, customers` · 6 row(s) · row order matters
+
+### Q58
+**Electronics buyers who come back for Fashion** · _Sequence analysis, EXISTS with time condition_
+
+How many customers bought **Electronics** in a valid order and then, in a **later** valid order, bought **Fashion**? Also return what percentage that is of all Electronics buyers. Columns: `electronics_buyers`, `later_fashion_buyers`, `pct` (1 decimal).
+
+Expected columns: `electronics_buyers, later_fashion_buyers, pct` · 1 row(s) · any row order
+
+### Q59
+**Did the April 2025 price rise stick?** · _Before/after comparison, data validation_
+
+Finance says every price went up **5% on 2025-04-01**. Check it: for each product sold (valid orders) both in 2025-01-01…2025-03-31 and in 2025-04-01…2025-06-30, compute its average `unit_price` in each period and the % change. Then summarise by category: `category`, `products`, `min_pct_change`, `max_pct_change` (1 decimal), alphabetical by category. (Bonus: a few products rose slightly *less* than 5%. Look at their prices: why might that be?)
+
+Expected columns: `category, products, min_pct_change, max_pct_change` · 6 row(s) · row order matters
+
+### Q60
+**Fastest-growing categories** · _YoY growth + RANK_
+
+Compare valid revenue in 2024 and 2025 for each category. Return `category`, `revenue_2024`, `revenue_2025` (whole rupees), `yoy_growth_pct` (1 decimal) and `growth_rank` (1 = fastest, using RANK), ordered by rank.
+
+Expected columns: `category, revenue_2024, revenue_2025, yoy_growth_pct, growth_rank` · 6 row(s) · row order matters
 

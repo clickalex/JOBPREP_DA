@@ -1072,3 +1072,548 @@ GROUP BY f.first_order_type;
 
 </details>
 
+
+## Set 2 · Easy
+
+### Q41 — Free-shipping orders
+
+```sql
+SELECT SUM(shipping_fee = 0) AS free_shipping_orders,
+       ROUND(100.0 * SUM(shipping_fee = 0) / COUNT(*), 1) AS pct_free_shipping
+FROM orders;
+```
+
+<details><summary>Expected output</summary>
+
+| free_shipping_orders | pct_free_shipping |
+|---|---|
+| 10774 | 90.70 |
+
+</details>
+
+### Q42 — Anonymous sessions
+
+```sql
+SELECT COUNT(*)                      AS sessions,
+       COUNT(customer_id)            AS logged_in_sessions,
+       COUNT(*) - COUNT(customer_id) AS anonymous_sessions,
+       ROUND(100.0 * (COUNT(*) - COUNT(customer_id)) / COUNT(*), 1) AS pct_anonymous
+FROM web_sessions;
+```
+
+<details><summary>Expected output</summary>
+
+| sessions | logged_in_sessions | anonymous_sessions | pct_anonymous |
+|---|---|---|---|
+| 40000 | 25097 | 14903 | 37.30 |
+
+</details>
+
+### Q43 — Weekend vs weekday
+
+```sql
+SELECT CASE WHEN strftime('%w', order_ts) IN ('0','6') THEN 'Weekend' ELSE 'Weekday' END AS day_type,
+       COUNT(*) AS orders,
+       ROUND(1.0 * COUNT(*) / COUNT(DISTINCT date(order_ts)), 1) AS avg_orders_per_day
+FROM orders
+GROUP BY day_type
+ORDER BY day_type;
+```
+
+<details><summary>Expected output</summary>
+
+| day_type | orders | avg_orders_per_day |
+|---|---|---|
+| Weekday | 8448 | 16.20 |
+| Weekend | 3437 | 16.50 |
+
+</details>
+
+### Q44 — Hiring by year
+
+```sql
+SELECT strftime('%Y', hire_date) AS hire_year, COUNT(*) AS hires
+FROM employees
+GROUP BY hire_year
+ORDER BY hire_year;
+```
+
+<details><summary>Expected output</summary>
+
+| hire_year | hires |
+|---|---|
+| 2018 | 3 |
+| 2019 | 4 |
+| 2020 | 3 |
+| 2021 | 2 |
+| 2022 | 4 |
+| 2023 | 5 |
+| … 2 more rows | |
+
+</details>
+
+### Q45 — Customers by age band
+
+```sql
+SELECT CASE WHEN 2025 - birth_year < 25 THEN '18-24'
+            WHEN 2025 - birth_year < 35 THEN '25-34'
+            WHEN 2025 - birth_year < 45 THEN '35-44'
+            ELSE '45+' END AS age_band,
+       COUNT(*) AS customers
+FROM customers
+GROUP BY age_band
+ORDER BY age_band;
+```
+
+<details><summary>Expected output</summary>
+
+| age_band | customers |
+|---|---|
+| 18-24 | 1527 |
+| 25-34 | 3647 |
+| 35-44 | 2393 |
+| 45+ | 433 |
+
+</details>
+
+### Q46 — Peak ordering hours
+
+```sql
+SELECT strftime('%H', order_ts) AS hour, COUNT(*) AS orders
+FROM orders
+GROUP BY hour
+ORDER BY orders DESC, hour
+LIMIT 3;
+```
+
+<details><summary>Expected output</summary>
+
+| hour | orders |
+|---|---|
+| 10 | 725 |
+| 09 | 723 |
+| 14 | 715 |
+
+</details>
+
+
+## Set 2 · Medium
+
+### Q47 — Lapsed 2024 buyers
+
+```sql
+SELECT c.region, COUNT(*) AS lapsed_customers
+FROM customers c
+WHERE EXISTS (
+        SELECT 1 FROM orders o
+        WHERE o.customer_id = c.customer_id AND o.status IN ('Delivered','Shipped')
+          AND o.order_ts >= '2024-01-01' AND o.order_ts < '2025-01-01')
+  AND NOT EXISTS (
+        SELECT 1 FROM orders o
+        WHERE o.customer_id = c.customer_id AND o.status IN ('Delivered','Shipped')
+          AND o.order_ts >= '2025-01-01' AND o.order_ts < '2026-01-01')
+GROUP BY c.region
+ORDER BY lapsed_customers DESC;
+```
+
+<details><summary>Expected output</summary>
+
+| region | lapsed_customers |
+|---|---|
+| North | 529 |
+| South | 515 |
+| West | 476 |
+| East | 127 |
+
+</details>
+
+### Q48 — Region × category pivot
+
+```sql
+SELECT c.region,
+       ROUND(SUM(CASE WHEN p.category = 'Electronics'    THEN oi.quantity * oi.unit_price - oi.discount ELSE 0 END), 2) AS electronics,
+       ROUND(SUM(CASE WHEN p.category = 'Fashion'        THEN oi.quantity * oi.unit_price - oi.discount ELSE 0 END), 2) AS fashion,
+       ROUND(SUM(CASE WHEN p.category = 'Home & Kitchen' THEN oi.quantity * oi.unit_price - oi.discount ELSE 0 END), 2) AS home_kitchen,
+       ROUND(SUM(CASE WHEN p.category NOT IN ('Electronics','Fashion','Home & Kitchen')
+                      THEN oi.quantity * oi.unit_price - oi.discount ELSE 0 END), 2) AS other,
+       ROUND(SUM(oi.quantity * oi.unit_price - oi.discount), 2) AS total
+FROM orders o
+JOIN customers c    ON c.customer_id = o.customer_id
+JOIN order_items oi ON oi.order_id = o.order_id
+JOIN products p     ON p.product_id = oi.product_id
+WHERE o.status IN ('Delivered','Shipped')
+  AND o.order_ts >= '2025-01-01' AND o.order_ts < '2026-01-01'
+GROUP BY c.region
+ORDER BY total DESC;
+```
+
+<details><summary>Expected output</summary>
+
+| region | electronics | fashion | home_kitchen | other | total |
+|---|---|---|---|---|---|
+| North | 2,491,573.60 | 2,269,636.35 | 1,238,367.95 | 1,069,706.05 | 7,069,283.95 |
+| South | 2,225,195.05 | 1,995,860.05 | 1,178,163.45 | 1,041,394.05 | 6,440,612.60 |
+| West | 1,804,796.60 | 1,635,420.75 | 890,038.35 | 851,399.90 | 5,181,655.60 |
+| East | 483,129.45 | 441,006.75 | 167,035.90 | 178,050.40 | 1,269,222.50 |
+
+</details>
+
+### Q49 — Days from sign-up to first order
+
+```sql
+WITH first_order AS (
+    SELECT customer_id, MIN(order_ts) AS first_ts
+    FROM orders
+    WHERE status IN ('Delivered','Shipped')
+    GROUP BY customer_id)
+SELECT c.acquisition_channel,
+       COUNT(*) AS buyers,
+       ROUND(AVG(julianday(date(f.first_ts)) - julianday(c.signup_date)), 1) AS avg_days_to_first_order
+FROM first_order f
+JOIN customers c ON c.customer_id = f.customer_id
+GROUP BY c.acquisition_channel
+ORDER BY avg_days_to_first_order;
+```
+
+<details><summary>Expected output</summary>
+
+| acquisition_channel | buyers | avg_days_to_first_order |
+|---|---|---|
+| Affiliate | 417 | 6.80 |
+| Email | 516 | 7.50 |
+| Paid Social | 1162 | 8.70 |
+| Referral | 833 | 8.90 |
+| Organic Search | 1665 | 9.90 |
+| Paid Search | 1087 | 10.60 |
+
+</details>
+
+### Q50 — Repeat rate by channel
+
+```sql
+WITH per_customer AS (
+    SELECT customer_id, COUNT(*) AS n_orders
+    FROM orders
+    WHERE status IN ('Delivered','Shipped')
+    GROUP BY customer_id)
+SELECT c.acquisition_channel,
+       COUNT(*)                AS buyers,
+       SUM(pc.n_orders >= 2)   AS repeat_buyers,
+       ROUND(100.0 * SUM(pc.n_orders >= 2) / COUNT(*), 1) AS repeat_rate_pct
+FROM per_customer pc
+JOIN customers c ON c.customer_id = pc.customer_id
+GROUP BY c.acquisition_channel
+ORDER BY repeat_rate_pct DESC;
+```
+
+<details><summary>Expected output</summary>
+
+| acquisition_channel | buyers | repeat_buyers | repeat_rate_pct |
+|---|---|---|---|
+| Referral | 833 | 496 | 59.50 |
+| Email | 516 | 283 | 54.80 |
+| Organic Search | 1665 | 801 | 48.10 |
+| Paid Search | 1087 | 398 | 36.60 |
+| Affiliate | 417 | 125 | 30.00 |
+| Paid Social | 1162 | 348 | 29.90 |
+
+</details>
+
+### Q51 — Spend quartiles
+
+```sql
+WITH spend AS (
+    SELECT o.customer_id, SUM(oi.quantity * oi.unit_price - oi.discount) AS revenue
+    FROM orders o JOIN order_items oi ON oi.order_id = o.order_id
+    WHERE o.status IN ('Delivered','Shipped')
+    GROUP BY o.customer_id),
+q AS (
+    SELECT revenue, NTILE(4) OVER (ORDER BY revenue DESC, customer_id) AS quartile FROM spend)
+SELECT quartile,
+       COUNT(*) AS customers,
+       ROUND(MIN(revenue), 2) AS min_spend,
+       ROUND(MAX(revenue), 2) AS max_spend,
+       ROUND(100.0 * SUM(revenue) / (SELECT SUM(revenue) FROM spend), 1) AS pct_of_revenue
+FROM q
+GROUP BY quartile
+ORDER BY quartile;
+```
+
+<details><summary>Expected output</summary>
+
+| quartile | customers | min_spend | max_spend | pct_of_revenue |
+|---|---|---|---|---|
+| 1 | 1420 | 7,341.00 | 42,830.00 | 58.50 |
+| 2 | 1420 | 3,820.15 | 7,325.55 | 24.70 |
+| 3 | 1420 | 1,690.60 | 3,817.15 | 12.70 |
+| 4 | 1420 | 169.15 | 1,678.00 | 4.10 |
+
+</details>
+
+### Q52 — Duplicate customer emails
+
+```sql
+WITH e AS (
+    SELECT LOWER(TRIM(email)) AS email, COUNT(*) AS n
+    FROM customers
+    WHERE email IS NOT NULL
+    GROUP BY LOWER(TRIM(email))
+    HAVING COUNT(*) > 1)
+SELECT COUNT(*) AS duplicated_emails, SUM(n) AS records_involved
+FROM e;
+```
+
+<details><summary>Expected output</summary>
+
+| duplicated_emails | records_involved |
+|---|---|
+| 7 | 14 |
+
+</details>
+
+### Q53 — Cumulative sign-ups in 2025
+
+```sql
+SELECT strftime('%Y-%m', signup_date) AS month,
+       COUNT(*) AS signups,
+       SUM(COUNT(*)) OVER (ORDER BY strftime('%Y-%m', signup_date)) AS cumulative_signups
+FROM customers
+WHERE signup_date >= '2025-01-01' AND signup_date < '2026-01-01'
+GROUP BY month
+ORDER BY month;
+```
+
+<details><summary>Expected output</summary>
+
+| month | signups | cumulative_signups |
+|---|---|---|
+| 2025-01 | 337 | 337 |
+| 2025-02 | 287 | 624 |
+| 2025-03 | 356 | 980 |
+| 2025-04 | 355 | 1335 |
+| 2025-05 | 380 | 1715 |
+| 2025-06 | 381 | 2096 |
+| … 6 more rows | | |
+
+</details>
+
+### Q54 — Coupon share by month
+
+```sql
+SELECT strftime('%Y-%m', order_ts) AS month,
+       COUNT(*) AS orders,
+       COUNT(coupon_code) AS coupon_orders,
+       ROUND(100.0 * COUNT(coupon_code) / COUNT(*), 1) AS coupon_pct
+FROM orders
+WHERE status IN ('Delivered','Shipped')
+  AND order_ts >= '2025-01-01' AND order_ts < '2026-01-01'
+GROUP BY month
+ORDER BY month;
+```
+
+<details><summary>Expected output</summary>
+
+| month | orders | coupon_orders | coupon_pct |
+|---|---|---|---|
+| 2025-01 | 400 | 114 | 28.50 |
+| 2025-02 | 370 | 91 | 24.60 |
+| 2025-03 | 435 | 140 | 32.20 |
+| 2025-04 | 471 | 137 | 29.10 |
+| 2025-05 | 512 | 154 | 30.10 |
+| 2025-06 | 467 | 127 | 27.20 |
+| … 6 more rows | | | |
+
+</details>
+
+
+## Set 2 · Hard
+
+### Q55 — Quietest days of 2025
+
+```sql
+WITH RECURSIVE calendar(day) AS (
+    SELECT '2025-01-01'
+    UNION ALL
+    SELECT date(day, '+1 day') FROM calendar WHERE day < '2025-12-31'),
+daily AS (
+    SELECT date(order_ts) AS day, COUNT(*) AS n
+    FROM orders
+    WHERE status IN ('Delivered','Shipped')
+    GROUP BY date(order_ts))
+SELECT c.day, COALESCE(d.n, 0) AS valid_orders
+FROM calendar c
+LEFT JOIN daily d ON d.day = c.day
+ORDER BY valid_orders, c.day
+LIMIT 5;
+```
+
+<details><summary>Expected output</summary>
+
+| day | valid_orders |
+|---|---|
+| 2025-05-09 | 6 |
+| 2025-01-10 | 7 |
+| 2025-01-17 | 7 |
+| 2025-01-06 | 8 |
+| 2025-02-11 | 8 |
+
+</details>
+
+### Q56 — Org chart levels
+
+```sql
+WITH RECURSIVE org(employee_id, monthly_salary, level) AS (
+    SELECT employee_id, monthly_salary, 0
+    FROM employees WHERE manager_id IS NULL
+    UNION ALL
+    SELECT e.employee_id, e.monthly_salary, org.level + 1
+    FROM employees e JOIN org ON e.manager_id = org.employee_id)
+SELECT level, COUNT(*) AS employees, ROUND(AVG(monthly_salary)) AS avg_salary
+FROM org
+GROUP BY level
+ORDER BY level;
+```
+
+<details><summary>Expected output</summary>
+
+| level | employees | avg_salary |
+|---|---|---|
+| 0 | 1 | 450,000.00 |
+| 1 | 4 | 257,500.00 |
+| 2 | 11 | 128,000.00 |
+| 3 | 14 | 83,500.00 |
+
+</details>
+
+### Q57 — Longest buying streak
+
+```sql
+WITH months AS (
+    SELECT DISTINCT customer_id,
+           CAST(strftime('%Y', order_ts) AS INTEGER) * 12 + CAST(strftime('%m', order_ts) AS INTEGER) AS m
+    FROM orders
+    WHERE status IN ('Delivered','Shipped')),
+islands AS (
+    SELECT customer_id, m - ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY m) AS grp
+    FROM months),
+streaks AS (
+    SELECT customer_id, COUNT(*) AS len FROM islands GROUP BY customer_id, grp),
+best AS (
+    SELECT customer_id, MAX(len) AS streak_months FROM streaks GROUP BY customer_id)
+SELECT streak_months, COUNT(*) AS customers
+FROM best
+GROUP BY streak_months
+ORDER BY streak_months DESC;
+```
+
+<details><summary>Expected output</summary>
+
+| streak_months | customers |
+|---|---|
+| 6 | 1 |
+| 5 | 5 |
+| 4 | 26 |
+| 3 | 137 |
+| 2 | 827 |
+| 1 | 4684 |
+
+</details>
+
+### Q58 — Electronics buyers who come back for Fashion
+
+```sql
+WITH lines AS (
+    SELECT o.customer_id, o.order_ts, p.category
+    FROM orders o
+    JOIN order_items oi ON oi.order_id = o.order_id
+    JOIN products p     ON p.product_id = oi.product_id
+    WHERE o.status IN ('Delivered','Shipped')),
+first_elec AS (
+    SELECT customer_id, MIN(order_ts) AS ts FROM lines WHERE category = 'Electronics' GROUP BY customer_id)
+SELECT COUNT(*) AS electronics_buyers,
+       SUM(EXISTS (SELECT 1 FROM lines l
+                   WHERE l.customer_id = f.customer_id AND l.category = 'Fashion' AND l.order_ts > f.ts)) AS later_fashion_buyers,
+       ROUND(100.0 * SUM(EXISTS (SELECT 1 FROM lines l
+                   WHERE l.customer_id = f.customer_id AND l.category = 'Fashion' AND l.order_ts > f.ts)) / COUNT(*), 1) AS pct
+FROM first_elec f;
+```
+
+<details><summary>Expected output</summary>
+
+| electronics_buyers | later_fashion_buyers | pct |
+|---|---|---|
+| 2685 | 676 | 25.20 |
+
+</details>
+
+### Q59 — Did the April 2025 price rise stick?
+
+```sql
+WITH per_product AS (
+    SELECT p.category, p.product_id,
+           AVG(CASE WHEN o.order_ts <  '2025-04-01' THEN oi.unit_price END) AS before_price,
+           AVG(CASE WHEN o.order_ts >= '2025-04-01' THEN oi.unit_price END) AS after_price
+    FROM orders o
+    JOIN order_items oi ON oi.order_id = o.order_id
+    JOIN products p     ON p.product_id = oi.product_id
+    WHERE o.status IN ('Delivered','Shipped')
+      AND o.order_ts >= '2025-01-01' AND o.order_ts < '2025-07-01'
+    GROUP BY p.category, p.product_id)
+SELECT category,
+       COUNT(*) AS products,
+       ROUND(MIN(100.0 * (after_price / before_price - 1)), 1) AS min_pct_change,
+       ROUND(MAX(100.0 * (after_price / before_price - 1)), 1) AS max_pct_change
+FROM per_product
+WHERE before_price IS NOT NULL AND after_price IS NOT NULL
+GROUP BY category
+ORDER BY category;
+```
+
+<details><summary>Expected output</summary>
+
+| category | products | min_pct_change | max_pct_change |
+|---|---|---|---|
+| Beauty | 8 | 4.80 | 5.00 |
+| Books | 5 | 4.80 | 5.00 |
+| Electronics | 10 | 5.00 | 5.00 |
+| Fashion | 10 | 5.00 | 5.00 |
+| Home & Kitchen | 9 | 4.90 | 5.00 |
+| Sports | 6 | 5.00 | 5.00 |
+
+</details>
+
+### Q60 — Fastest-growing categories
+
+```sql
+WITH yearly AS (
+    SELECT p.category,
+           SUM(CASE WHEN o.order_ts < '2025-01-01' THEN oi.quantity * oi.unit_price - oi.discount ELSE 0 END) AS r24,
+           SUM(CASE WHEN o.order_ts >= '2025-01-01' THEN oi.quantity * oi.unit_price - oi.discount ELSE 0 END) AS r25
+    FROM orders o
+    JOIN order_items oi ON oi.order_id = o.order_id
+    JOIN products p     ON p.product_id = oi.product_id
+    WHERE o.status IN ('Delivered','Shipped')
+      AND o.order_ts >= '2024-01-01' AND o.order_ts < '2026-01-01'
+    GROUP BY p.category)
+SELECT category,
+       ROUND(r24) AS revenue_2024,
+       ROUND(r25) AS revenue_2025,
+       ROUND(100.0 * (r25 - r24) / r24, 1) AS yoy_growth_pct,
+       RANK() OVER (ORDER BY (r25 - r24) / r24 DESC) AS growth_rank
+FROM yearly
+ORDER BY growth_rank;
+```
+
+<details><summary>Expected output</summary>
+
+| category | revenue_2024 | revenue_2025 | yoy_growth_pct | growth_rank |
+|---|---|---|---|---|
+| Sports | 743,496.00 | 1,463,489.00 | 96.80 | 1 |
+| Fashion | 3,334,158.00 | 6,341,924.00 | 90.20 | 2 |
+| Home & Kitchen | 1,840,042.00 | 3,473,606.00 | 88.80 | 3 |
+| Electronics | 3,735,060.00 | 7,004,695.00 | 87.50 | 4 |
+| Beauty | 684,233.00 | 1,255,701.00 | 83.50 | 5 |
+| Books | 234,184.00 | 421,360.00 | 79.90 | 6 |
+
+</details>
+

@@ -125,11 +125,27 @@ def build_playground():
     return len(out)
 
 
-MOCK_MD = ROOT / "mock-interviews" / "01-live-sql-round.md"
+# Live SQL rounds used by the playground's timed mock mode, in order. Question ids are global (m1, m2, …) so
+# round 1 keeps its original #m1…#m7 links; append new rounds at the end so existing ids never change.
+MOCK_ROUNDS = [
+    (1, "Round 1 · Core SQL", ROOT / "mock-interviews" / "01-live-sql-round.md"),
+    (2, "Round 2 · Product & marketing", ROOT / "mock-interviews" / "05-live-sql-round-2.md"),
+    (3, "Round 3 · Advanced SQL", ROOT / "mock-interviews" / "06-live-sql-round-3.md"),
+]
 
 
-def extract_mock_questions(path: Path = MOCK_MD) -> list[dict]:
-    """Turn the live-SQL-round interviewer script into playground questions (single source of truth: the markdown)."""
+def extract_mock_questions(rounds=None) -> list[dict]:
+    """Turn the live-SQL-round interviewer scripts into playground questions (single source of truth: the markdown)."""
+    out = []
+    for rnd, name, path in (rounds or MOCK_ROUNDS):
+        for q in _extract_round(path):
+            q.update(id=f"m{len(out) + 1}", round=rnd, round_name=name,
+                     topics=f"Live SQL round {rnd} · ≈{q['minutes']} min")
+            out.append(q)
+    return out
+
+
+def _extract_round(path: Path) -> list[dict]:
     import markdown
 
     def md(t):
@@ -158,8 +174,8 @@ def extract_mock_questions(path: Path = MOCK_MD) -> list[dict]:
             hints.append("<p><b>What the interviewer is looking for:</b></p>" + md(" ".join(looking.group(1).split())))
         answer = sec.split("<summary>Answer key</summary>", 1)[1]
         solution = re.search(r"```sql\n(.+?)```", answer, flags=re.S).group(1).strip()
-        out.append({"id": f"m{num}", "level": "Mock", "title": title, "minutes": minutes,
-                    "topics": f"Live SQL round · ≈{minutes} min", "prompt_html": md(quote.strip('"')),
+        out.append({"num": num, "level": "Mock", "title": title, "minutes": minutes,
+                    "prompt_html": md(quote.strip('"')),
                     "hints": hints, "followups": followups, "ordered": False, "solution": solution})
     return out
 

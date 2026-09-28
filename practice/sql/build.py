@@ -44,7 +44,7 @@ def md_table(cols, rows, limit=6):
 
 def main():
     con = sqlite3.connect(ROOT / "data" / "shopkart.db")
-    ex = ["# SQL Practice — 40 interview-style questions\n",
+    ex = [f"# SQL Practice — {len(QUESTIONS)} interview-style questions\n",
           "Database: `data/shopkart.db` (see the [data dictionary](../../data/README.md)). "
           "Write each answer in `my_answers/qNN.sql`, then grade yourself with "
           "`python practice/sql/check.py`.\n", HEADER,
@@ -57,8 +57,9 @@ def main():
 
     current = None
     for q in QUESTIONS:
-        if q["level"] != current:
-            current = q["level"]
+        heading = q["level"] if q.get("set", 1) == 1 else f"Set {q['set']} · {q['level']}"
+        if heading != current:
+            current = heading
             ex.append(f"\n## {current}\n")
             sol.append(f"\n## {current}\n")
         cur = con.execute(q["solution"])

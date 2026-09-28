@@ -64,7 +64,7 @@ def main():
     solved = {int(m) for m in re.findall(r"✓ Q(\d+)", sql_out)}
     todo = [q for q in sql.QUESTIONS if q["id"] not in solved]
     nxt = f"Q{todo[0]['id']:02d} {todo[0]['title']} ({todo[0]['level']}) → practice/sql/my_answers/q{todo[0]['id']:02d}.sql" if todo else "all done 🎉 → try a mock interview (mock-interviews/)"
-    s = summarise("SQL · 40 questions", sql_out, len(sql.QUESTIONS), nxt)
+    s = summarise(f"SQL · {len(sql.QUESTIONS)} questions", sql_out, len(sql.QUESTIONS), nxt)
 
     py = load("py_check", ROOT / "practice" / "python" / "check.py")
     py_out = run_quiet(py, [])
@@ -73,10 +73,11 @@ def main():
     done_py = {m for m in re.findall(r"✓ (p\d\d\w*)", py_out)}
     todo_py = [n for n in names if n not in done_py]
     nxt_py = f"{todo_py[0]} in practice/python/exercises.py" if todo_py else "all done 🎉 → build your own portfolio project"
-    p = summarise("pandas · 25 exercises", py_out, len(names), nxt_py)
+    p = summarise(f"pandas · {len(names)} exercises", py_out, len(names), nxt_py)
 
     total = s + p
-    print(f"\nOverall: {bar(total, 65)}  {total}/65")
+    grand = len(sql.QUESTIONS) + len(names)
+    print(f"\nOverall: {bar(total, grand)}  {total}/{grand}")
     print("Excel: open practice/excel/ShopKart_Excel_Practice.xlsx; the Result column grades each task.\n")
 
 

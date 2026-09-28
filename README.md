@@ -6,21 +6,21 @@
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/clickalex/JOBPREP_DA/main?labpath=portfolio%2Fshopkart-growth-analysis%2Fanalysis.ipynb)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-A complete, hands-on kit for landing an **entry-level Data Analyst** role: a study guide, **85 auto-graded practice
+A complete, hands-on kit for landing an **entry-level Data Analyst** role: a study guide, **105 auto-graded practice
 exercises** (SQL, Python, Excel), **mock interviews**, and an **end-to-end portfolio project** with a Power BI / Tableau
 dashboard kit. Everything runs on one realistic dataset, so skills build on each other.
 
 > **🌐 Website:** **[clickalex.github.io/JOBPREP_DA](https://clickalex.github.io/JOBPREP_DA/)** has the whole kit as a
-> searchable site, plus an **[in-browser SQL Playground](https://clickalex.github.io/JOBPREP_DA/playground/)** (all 40
+> searchable site, plus an **[in-browser SQL Playground](https://clickalex.github.io/JOBPREP_DA/playground/)** (all 60
 > questions, graded instantly, nothing to install) and **[flashcards](https://clickalex.github.io/JOBPREP_DA/flashcards/)**.
 
 | | What's inside | Start here |
 |---|---|---|
 | 📚 **Study guide** | 7 chapters: concepts, cheat sheets, pitfalls, interview Q&A | [`study-guide/`](study-guide/) |
-| 🗄️ **SQL practice** | 40 questions, Easy → Hard, auto-graded, locally or [in the browser](https://clickalex.github.io/JOBPREP_DA/playground/) | [`practice/sql/`](practice/sql/) |
+| 🗄️ **SQL practice** | 60 questions, Easy → Hard, auto-graded, locally or [in the browser](https://clickalex.github.io/JOBPREP_DA/playground/) | [`practice/sql/`](practice/sql/) |
 | 🐍 **Python practice** | 25 pandas/stats exercises, auto-graded | [`practice/python/`](practice/python/) |
 | 📊 **Excel practice** | 20-task workbook that grades itself | [`practice/excel/`](practice/excel/) |
-| 🎤 **Mock interviews** | Live SQL round (also as a [timed, auto-graded mock](https://clickalex.github.io/JOBPREP_DA/playground/#m1)), case round, take-home, stats rapid-fire, all with scripts and rubrics | [`mock-interviews/`](mock-interviews/) |
+| 🎤 **Mock interviews** | Three live SQL rounds (core, product & marketing, advanced; all also available as [timed, auto-graded mocks](https://clickalex.github.io/JOBPREP_DA/playground/#m1)), case round, take-home, stats rapid-fire, all with scripts and rubrics | [`mock-interviews/`](mock-interviews/) |
 | 🃏 **Flashcards** | 54 interview Q&As from the study guide (web + Anki import) | [`study-guide/flashcards.csv`](study-guide/flashcards.csv) |
 | 💼 **Portfolio project** | Cleaning → analysis → A/B test → recommendations → dashboard | [`portfolio/shopkart-growth-analysis/`](portfolio/shopkart-growth-analysis/) |
 | 🧾 **Dataset** | ShopKart, a fictional Indian e-commerce company (8k customers, 12k orders, clickstream, A/B test) | [`data/`](data/) |
@@ -35,7 +35,7 @@ python -m venv .venv
 source .venv/bin/activate           # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 
-python practice/sql/check.py        # 0 passed · 40 not attempted — let's change that
+python practice/sql/check.py        # 0 passed · 60 not attempted — let's change that
 python practice/python/check.py
 python progress.py                  # one-screen progress report + what to do next
 ```
@@ -65,13 +65,13 @@ dashboard CSVs in Power BI / Tableau.
 | Week | Learn | Do | Done when |
 |---|---|---|---|
 | 1 | SQL §1–4 | SQL Q1–12 | All Easy questions pass |
-| 2 | SQL §5–6 (window functions) | SQL Q13–28 | Medium questions pass, ~10 min each |
+| 2 | SQL §5–6 (window functions) | SQL Q13–28 (+ Q41–50 for extra reps) | Medium questions pass, ~10 min each |
 | 3 | Excel guide | Excel workbook tasks 1–20 + bonus dashboard | Score 20/20 without the answer key |
 | 4 | Python/pandas guide | Python p01–p18 | Cleaning + analysis sections pass |
-| 5 | Statistics guide | Python p19–p25, SQL Q29–40 | You can explain the A/B readout out loud |
+| 5 | Statistics guide | Python p19–p25, SQL Q29–40 and Q51–60 | You can explain the A/B readout out loud |
 | 6 | BI guide | Build the ShopKart dashboard (3 pages) | Your KPIs match the target numbers; published or screenshotted |
 | 7 | Metrics & cases guide | Re-do the portfolio analysis **your own way** + add one new question | README in your own words, on your GitHub |
-| 8 | Behavioral guide | 6 STAR stories, resume, LinkedIn, the 4 [mock interviews](mock-interviews/) | Applying daily; referrals requested |
+| 8 | Behavioral guide | 6 STAR stories, resume, LinkedIn, the [mock interviews](mock-interviews/) (3 live SQL rounds + case, take-home, stats) | Applying daily; referrals requested |
 
 Already comfortable with a topic? Run the checker on the Hard questions first, and skip ahead if they pass.
 
@@ -141,9 +141,9 @@ python website/build_site.py && mkdocs serve -f website/mkdocs.yml     # http://
 Once the workflows are activated ([`ci/README.md`](ci/README.md)), every push and pull request runs the test suite on **Linux, Windows and macOS** (Python 3.10–3.13):
 
 * the dataset matches its checksums and regenerates byte-for-byte;
-* all 40 SQL and 25 pandas reference solutions pass their graders, and the graders reject wrong answers
+* all 60 SQL and 25 pandas reference solutions pass their graders, and the graders reject wrong answers
   (wrong values, wrong row order, wrong column count);
-* the browser playground's grader passes all 40 solutions inside **sql.js** (Node, headless);
+* the browser playground's grader passes all 60 practice and 19 mock-interview solutions inside **sql.js** (Node, headless);
 * every Excel Answer Key formula is evaluated by a formula engine and matches the expected answer;
 * the portfolio notebook executes top to bottom;
 * every relative link and `#anchor` in the markdown resolves, and the website builds with `--strict`.

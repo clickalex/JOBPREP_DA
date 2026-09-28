@@ -2,7 +2,7 @@
 
 **Setup:** the candidate shares a screen with a SQL editor open on `data/shopkart.db`. The
 [SQL Playground](https://clickalex.github.io/JOBPREP_DA/playground/) (Scratchpad mode) works with zero setup. These
-questions are **not** in the 40 practice exercises, so they're fresh even if you've done the whole set.
+questions are **not** in the 60 practice exercises, so they're fresh even if you've done the whole set.
 
 **Practising alone?** Open the playground's **timed mock mode**
 ([playground ▸ ⏱ Start timed mock](https://clickalex.github.io/JOBPREP_DA/playground/#m1)). It serves these same

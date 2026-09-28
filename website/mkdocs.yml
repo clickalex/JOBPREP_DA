@@ -76,6 +76,8 @@ nav:
   - Mock interviews:
       - Overview: mock-interviews/README.md
       - Live SQL round: mock-interviews/01-live-sql-round.md
+      - Live SQL round 2 (product & marketing): mock-interviews/05-live-sql-round-2.md
+      - Live SQL round 3 (advanced): mock-interviews/06-live-sql-round-3.md
       - Case round: mock-interviews/02-case-round.md
       - Take-home assignment: mock-interviews/03-take-home-assignment.md
       - Stats rapid-fire: mock-interviews/04-stats-rapid-fire.md

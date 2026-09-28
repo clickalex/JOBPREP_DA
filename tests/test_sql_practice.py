@@ -22,7 +22,7 @@ def write(folder, qid, sql):
 
 
 def test_question_bank_shape():
-    assert [q["id"] for q in QUESTIONS] == list(range(1, 41))
+    assert [q["id"] for q in QUESTIONS] == list(range(1, 61))
     assert {q["level"] for q in QUESTIONS} == {"Easy", "Medium", "Hard"}
     for q in QUESTIONS:
         assert q["title"] and q["prompt"] and q["solution"].strip()
@@ -32,14 +32,14 @@ def test_all_reference_solutions_pass(answers, capsys):
     for q in QUESTIONS:
         write(answers, q["id"], q["solution"])
     assert check.main([]) == 0
-    assert "40 passed" in capsys.readouterr().out
+    assert "60 passed" in capsys.readouterr().out
 
 
 def test_empty_starters_count_as_not_attempted(capsys):
     """The committed my_answers/ starters must be blank templates, not solutions."""
-    assert len(list((SQL / "my_answers").glob("q*.sql"))) == 40
+    assert len(list((SQL / "my_answers").glob("q*.sql"))) == 60
     assert check.main([]) == 0
-    assert "40 not attempted" in capsys.readouterr().out
+    assert "60 not attempted" in capsys.readouterr().out
 
 
 def test_wrong_value_is_rejected(answers, capsys):

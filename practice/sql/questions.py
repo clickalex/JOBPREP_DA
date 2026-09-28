@@ -770,4 +770,317 @@ LEFT JOIN repeaters AS r ON r.customer_id = f.customer_id
 WHERE f.first_order_type IS NOT NULL
 GROUP BY f.first_order_type;
 """),
+
+    # ------------------------------------------------------------------ SET 2 (Q41–Q60)
+    # New techniques: NULL counting, NTILE, pivots, recursive CTEs (date spine, hierarchy),
+    # gaps-and-islands, sequence analysis, before/after validation.
+
+    dict(set=2, id=41, level="Easy", topics="Conditional aggregation, share of total", title="Free-shipping orders",
+        prompt="What share of **all** orders (any status) had no shipping fee (`shipping_fee = 0`)? Return `free_shipping_orders` and `pct_free_shipping` (1 decimal).",
+        ordered=False, solution="""
+SELECT SUM(shipping_fee = 0) AS free_shipping_orders,
+       ROUND(100.0 * SUM(shipping_fee = 0) / COUNT(*), 1) AS pct_free_shipping
+FROM orders;
+"""),
+    dict(set=2, id=42, level="Easy", topics="NULLs: COUNT(*) vs COUNT(column)", title="Anonymous sessions",
+        prompt="In `web_sessions`, `customer_id` is NULL when the visitor wasn't logged in. Return `sessions` (all rows), `logged_in_sessions`, "
+         "`anonymous_sessions` and `pct_anonymous` (1 decimal), using the difference between `COUNT(*)` and `COUNT(column)`.",
+        ordered=False, solution="""
+SELECT COUNT(*)                      AS sessions,
+       COUNT(customer_id)            AS logged_in_sessions,
+       COUNT(*) - COUNT(customer_id) AS anonymous_sessions,
+       ROUND(100.0 * (COUNT(*) - COUNT(customer_id)) / COUNT(*), 1) AS pct_anonymous
+FROM web_sessions;
+"""),
+    dict(set=2, id=43, level="Easy", topics="CASE, strftime('%w')", title="Weekend vs weekday",
+        prompt="Split all orders into `Weekend` (Saturday/Sunday) and `Weekday`. Return `day_type`, `orders` and `avg_orders_per_day` "
+         "(orders ÷ number of distinct calendar dates of that type that had orders, 1 decimal), weekday first.",
+        ordered=True, solution="""
+SELECT CASE WHEN strftime('%w', order_ts) IN ('0','6') THEN 'Weekend' ELSE 'Weekday' END AS day_type,
+       COUNT(*) AS orders,
+       ROUND(1.0 * COUNT(*) / COUNT(DISTINCT date(order_ts)), 1) AS avg_orders_per_day
+FROM orders
+GROUP BY day_type
+ORDER BY day_type;
+"""),
+    dict(set=2, id=44, level="Easy", topics="strftime, GROUP BY", title="Hiring by year",
+        prompt="How many employees were hired each year? Return `hire_year` and `hires`, oldest year first.",
+        ordered=True, solution="""
+SELECT strftime('%Y', hire_date) AS hire_year, COUNT(*) AS hires
+FROM employees
+GROUP BY hire_year
+ORDER BY hire_year;
+"""),
+    dict(set=2, id=45, level="Easy", topics="CASE buckets, derived columns", title="Customers by age band",
+        prompt="Using age in 2025 (`2025 - birth_year`), bucket customers into `'18-24'`, `'25-34'`, `'35-44'` and `'45+'`. "
+         "Return `age_band` and `customers`, youngest band first.",
+        ordered=True, solution="""
+SELECT CASE WHEN 2025 - birth_year < 25 THEN '18-24'
+            WHEN 2025 - birth_year < 35 THEN '25-34'
+            WHEN 2025 - birth_year < 45 THEN '35-44'
+            ELSE '45+' END AS age_band,
+       COUNT(*) AS customers
+FROM customers
+GROUP BY age_band
+ORDER BY age_band;
+"""),
+    dict(set=2, id=46, level="Easy", topics="strftime('%H'), LIMIT", title="Peak ordering hours",
+        prompt="Which 3 hours of the day receive the most orders (any status)? Return `hour` (as `'00'`–`'23'`) and `orders`, busiest first.",
+        ordered=True, solution="""
+SELECT strftime('%H', order_ts) AS hour, COUNT(*) AS orders
+FROM orders
+GROUP BY hour
+ORDER BY orders DESC, hour
+LIMIT 3;
+"""),
+    dict(set=2, id=47, level="Medium", topics="Anti-join with NOT EXISTS", title="Lapsed 2024 buyers",
+        prompt="Which customers placed a valid order in **2024** but **none in 2025**? Return `region` and `lapsed_customers`, most first.",
+        ordered=True, solution="""
+SELECT c.region, COUNT(*) AS lapsed_customers
+FROM customers c
+WHERE EXISTS (
+        SELECT 1 FROM orders o
+        WHERE o.customer_id = c.customer_id AND o.status IN ('Delivered','Shipped')
+          AND o.order_ts >= '2024-01-01' AND o.order_ts < '2025-01-01')
+  AND NOT EXISTS (
+        SELECT 1 FROM orders o
+        WHERE o.customer_id = c.customer_id AND o.status IN ('Delivered','Shipped')
+          AND o.order_ts >= '2025-01-01' AND o.order_ts < '2026-01-01')
+GROUP BY c.region
+ORDER BY lapsed_customers DESC;
+"""),
+    dict(set=2, id=48, level="Medium", topics="Pivot with conditional aggregation", title="Region × category pivot",
+        prompt="Build a 2025 revenue pivot: one row per customer `region`, with columns `electronics`, `fashion`, `home_kitchen`, `other` "
+         "(all remaining categories) and `total`, rounded to 2 decimals, highest total first.",
+        ordered=True, solution="""
+SELECT c.region,
+       ROUND(SUM(CASE WHEN p.category = 'Electronics'    THEN oi.quantity * oi.unit_price - oi.discount ELSE 0 END), 2) AS electronics,
+       ROUND(SUM(CASE WHEN p.category = 'Fashion'        THEN oi.quantity * oi.unit_price - oi.discount ELSE 0 END), 2) AS fashion,
+       ROUND(SUM(CASE WHEN p.category = 'Home & Kitchen' THEN oi.quantity * oi.unit_price - oi.discount ELSE 0 END), 2) AS home_kitchen,
+       ROUND(SUM(CASE WHEN p.category NOT IN ('Electronics','Fashion','Home & Kitchen')
+                      THEN oi.quantity * oi.unit_price - oi.discount ELSE 0 END), 2) AS other,
+       ROUND(SUM(oi.quantity * oi.unit_price - oi.discount), 2) AS total
+FROM orders o
+JOIN customers c    ON c.customer_id = o.customer_id
+JOIN order_items oi ON oi.order_id = o.order_id
+JOIN products p     ON p.product_id = oi.product_id
+WHERE o.status IN ('Delivered','Shipped')
+  AND o.order_ts >= '2025-01-01' AND o.order_ts < '2026-01-01'
+GROUP BY c.region
+ORDER BY total DESC;
+"""),
+    dict(set=2, id=49, level="Medium", topics="julianday, first-event logic", title="Days from sign-up to first order",
+        prompt="For customers with at least one valid order, how many days pass between `signup_date` and their first valid order? "
+         "Return `acquisition_channel`, `buyers` and `avg_days_to_first_order` (1 decimal), fastest channel first.",
+        ordered=True, solution="""
+WITH first_order AS (
+    SELECT customer_id, MIN(order_ts) AS first_ts
+    FROM orders
+    WHERE status IN ('Delivered','Shipped')
+    GROUP BY customer_id)
+SELECT c.acquisition_channel,
+       COUNT(*) AS buyers,
+       ROUND(AVG(julianday(date(f.first_ts)) - julianday(c.signup_date)), 1) AS avg_days_to_first_order
+FROM first_order f
+JOIN customers c ON c.customer_id = f.customer_id
+GROUP BY c.acquisition_channel
+ORDER BY avg_days_to_first_order;
+"""),
+    dict(set=2, id=50, level="Medium", topics="Two-level aggregation, rates", title="Repeat rate by channel",
+        prompt="Among customers with at least one valid order, what percentage placed **two or more** valid orders? "
+         "Return `acquisition_channel`, `buyers`, `repeat_buyers`, `repeat_rate_pct` (1 decimal), highest rate first.",
+        ordered=True, solution="""
+WITH per_customer AS (
+    SELECT customer_id, COUNT(*) AS n_orders
+    FROM orders
+    WHERE status IN ('Delivered','Shipped')
+    GROUP BY customer_id)
+SELECT c.acquisition_channel,
+       COUNT(*)                AS buyers,
+       SUM(pc.n_orders >= 2)   AS repeat_buyers,
+       ROUND(100.0 * SUM(pc.n_orders >= 2) / COUNT(*), 1) AS repeat_rate_pct
+FROM per_customer pc
+JOIN customers c ON c.customer_id = pc.customer_id
+GROUP BY c.acquisition_channel
+ORDER BY repeat_rate_pct DESC;
+"""),
+    dict(set=2, id=51, level="Medium", topics="NTILE, window functions", title="Spend quartiles",
+        prompt="Rank buyers by lifetime valid revenue and split them into 4 equal-sized groups with `NTILE(4)` (quartile 1 = top spenders). "
+         "Return `quartile`, `customers`, `min_spend`, `max_spend` and `pct_of_revenue` (1 decimal).",
+        ordered=True, solution="""
+WITH spend AS (
+    SELECT o.customer_id, SUM(oi.quantity * oi.unit_price - oi.discount) AS revenue
+    FROM orders o JOIN order_items oi ON oi.order_id = o.order_id
+    WHERE o.status IN ('Delivered','Shipped')
+    GROUP BY o.customer_id),
+q AS (
+    SELECT revenue, NTILE(4) OVER (ORDER BY revenue DESC, customer_id) AS quartile FROM spend)
+SELECT quartile,
+       COUNT(*) AS customers,
+       ROUND(MIN(revenue), 2) AS min_spend,
+       ROUND(MAX(revenue), 2) AS max_spend,
+       ROUND(100.0 * SUM(revenue) / (SELECT SUM(revenue) FROM spend), 1) AS pct_of_revenue
+FROM q
+GROUP BY quartile
+ORDER BY quartile;
+"""),
+    dict(set=2, id=52, level="Medium", topics="Data quality: duplicates, LOWER/TRIM", title="Duplicate customer emails",
+        prompt="Some people signed up twice. After normalising emails with `LOWER(TRIM(email))`, how many email addresses appear on more than one "
+         "customer record, and how many records do they cover? Return `duplicated_emails` and `records_involved`.",
+        ordered=False, solution="""
+WITH e AS (
+    SELECT LOWER(TRIM(email)) AS email, COUNT(*) AS n
+    FROM customers
+    WHERE email IS NOT NULL
+    GROUP BY LOWER(TRIM(email))
+    HAVING COUNT(*) > 1)
+SELECT COUNT(*) AS duplicated_emails, SUM(n) AS records_involved
+FROM e;
+"""),
+    dict(set=2, id=53, level="Medium", topics="Running total", title="Cumulative sign-ups in 2025",
+        prompt="Show 2025 sign-ups per month and the running total. Return `month` (`YYYY-MM`), `signups`, `cumulative_signups`.",
+        ordered=True, solution="""
+SELECT strftime('%Y-%m', signup_date) AS month,
+       COUNT(*) AS signups,
+       SUM(COUNT(*)) OVER (ORDER BY strftime('%Y-%m', signup_date)) AS cumulative_signups
+FROM customers
+WHERE signup_date >= '2025-01-01' AND signup_date < '2026-01-01'
+GROUP BY month
+ORDER BY month;
+"""),
+    dict(set=2, id=54, level="Medium", topics="Conditional aggregation over time", title="Coupon share by month",
+        prompt="For each month of 2025, what share of valid orders used any coupon? Return `month`, `orders`, `coupon_orders`, `coupon_pct` (1 decimal).",
+        ordered=True, solution="""
+SELECT strftime('%Y-%m', order_ts) AS month,
+       COUNT(*) AS orders,
+       COUNT(coupon_code) AS coupon_orders,
+       ROUND(100.0 * COUNT(coupon_code) / COUNT(*), 1) AS coupon_pct
+FROM orders
+WHERE status IN ('Delivered','Shipped')
+  AND order_ts >= '2025-01-01' AND order_ts < '2026-01-01'
+GROUP BY month
+ORDER BY month;
+"""),
+    dict(set=2, id=55, level="Hard", topics="Recursive CTE date spine", title="Quietest days of 2025",
+        prompt="Days with **zero** orders don't appear in `orders`, so a plain GROUP BY hides them. Build a calendar of every date in 2025 "
+         "with a recursive CTE, LEFT JOIN valid orders, and return the 5 dates with the fewest valid orders: `day`, `valid_orders` "
+         "(fewest first, then earliest date).",
+        ordered=True, solution="""
+WITH RECURSIVE calendar(day) AS (
+    SELECT '2025-01-01'
+    UNION ALL
+    SELECT date(day, '+1 day') FROM calendar WHERE day < '2025-12-31'),
+daily AS (
+    SELECT date(order_ts) AS day, COUNT(*) AS n
+    FROM orders
+    WHERE status IN ('Delivered','Shipped')
+    GROUP BY date(order_ts))
+SELECT c.day, COALESCE(d.n, 0) AS valid_orders
+FROM calendar c
+LEFT JOIN daily d ON d.day = c.day
+ORDER BY valid_orders, c.day
+LIMIT 5;
+"""),
+    dict(set=2, id=56, level="Hard", topics="Recursive CTE hierarchy", title="Org chart levels",
+        prompt="Walk the reporting hierarchy with a recursive CTE, starting from the employee with no manager (level 0). "
+         "Return `level`, `employees` and `avg_salary` (whole rupees) for each level, top of the org first.",
+        ordered=True, solution="""
+WITH RECURSIVE org(employee_id, monthly_salary, level) AS (
+    SELECT employee_id, monthly_salary, 0
+    FROM employees WHERE manager_id IS NULL
+    UNION ALL
+    SELECT e.employee_id, e.monthly_salary, org.level + 1
+    FROM employees e JOIN org ON e.manager_id = org.employee_id)
+SELECT level, COUNT(*) AS employees, ROUND(AVG(monthly_salary)) AS avg_salary
+FROM org
+GROUP BY level
+ORDER BY level;
+"""),
+    dict(set=2, id=57, level="Hard", topics="Gaps and islands", title="Longest buying streak",
+        prompt="A **streak** is a run of consecutive calendar months in which a customer placed at least one valid order. Find each customer's "
+         "longest streak, then return the distribution: `streak_months` and `customers`, longest streak first.",
+        ordered=True, solution="""
+WITH months AS (
+    SELECT DISTINCT customer_id,
+           CAST(strftime('%Y', order_ts) AS INTEGER) * 12 + CAST(strftime('%m', order_ts) AS INTEGER) AS m
+    FROM orders
+    WHERE status IN ('Delivered','Shipped')),
+islands AS (
+    SELECT customer_id, m - ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY m) AS grp
+    FROM months),
+streaks AS (
+    SELECT customer_id, COUNT(*) AS len FROM islands GROUP BY customer_id, grp),
+best AS (
+    SELECT customer_id, MAX(len) AS streak_months FROM streaks GROUP BY customer_id)
+SELECT streak_months, COUNT(*) AS customers
+FROM best
+GROUP BY streak_months
+ORDER BY streak_months DESC;
+"""),
+    dict(set=2, id=58, level="Hard", topics="Sequence analysis, EXISTS with time condition", title="Electronics buyers who come back for Fashion",
+        prompt="How many customers bought **Electronics** in a valid order and then, in a **later** valid order, bought **Fashion**? "
+         "Also return what percentage that is of all Electronics buyers. Columns: `electronics_buyers`, `later_fashion_buyers`, `pct` (1 decimal).",
+        ordered=False, solution="""
+WITH lines AS (
+    SELECT o.customer_id, o.order_ts, p.category
+    FROM orders o
+    JOIN order_items oi ON oi.order_id = o.order_id
+    JOIN products p     ON p.product_id = oi.product_id
+    WHERE o.status IN ('Delivered','Shipped')),
+first_elec AS (
+    SELECT customer_id, MIN(order_ts) AS ts FROM lines WHERE category = 'Electronics' GROUP BY customer_id)
+SELECT COUNT(*) AS electronics_buyers,
+       SUM(EXISTS (SELECT 1 FROM lines l
+                   WHERE l.customer_id = f.customer_id AND l.category = 'Fashion' AND l.order_ts > f.ts)) AS later_fashion_buyers,
+       ROUND(100.0 * SUM(EXISTS (SELECT 1 FROM lines l
+                   WHERE l.customer_id = f.customer_id AND l.category = 'Fashion' AND l.order_ts > f.ts)) / COUNT(*), 1) AS pct
+FROM first_elec f;
+"""),
+    dict(set=2, id=59, level="Hard", topics="Before/after comparison, data validation", title="Did the April 2025 price rise stick?",
+        prompt="Finance says every price went up **5% on 2025-04-01**. Check it: for each product sold (valid orders) both in "
+         "2025-01-01…2025-03-31 and in 2025-04-01…2025-06-30, compute its average `unit_price` in each period and the % change. "
+         "Then summarise by category: `category`, `products`, `min_pct_change`, `max_pct_change` (1 decimal), alphabetical by category. "
+         "(Bonus: a few products rose slightly *less* than 5%. Look at their prices: why might that be?)",
+        ordered=True, solution="""
+WITH per_product AS (
+    SELECT p.category, p.product_id,
+           AVG(CASE WHEN o.order_ts <  '2025-04-01' THEN oi.unit_price END) AS before_price,
+           AVG(CASE WHEN o.order_ts >= '2025-04-01' THEN oi.unit_price END) AS after_price
+    FROM orders o
+    JOIN order_items oi ON oi.order_id = o.order_id
+    JOIN products p     ON p.product_id = oi.product_id
+    WHERE o.status IN ('Delivered','Shipped')
+      AND o.order_ts >= '2025-01-01' AND o.order_ts < '2025-07-01'
+    GROUP BY p.category, p.product_id)
+SELECT category,
+       COUNT(*) AS products,
+       ROUND(MIN(100.0 * (after_price / before_price - 1)), 1) AS min_pct_change,
+       ROUND(MAX(100.0 * (after_price / before_price - 1)), 1) AS max_pct_change
+FROM per_product
+WHERE before_price IS NOT NULL AND after_price IS NOT NULL
+GROUP BY category
+ORDER BY category;
+"""),
+    dict(set=2, id=60, level="Hard", topics="YoY growth + RANK", title="Fastest-growing categories",
+        prompt="Compare valid revenue in 2024 and 2025 for each category. Return `category`, `revenue_2024`, `revenue_2025` (whole rupees), "
+         "`yoy_growth_pct` (1 decimal) and `growth_rank` (1 = fastest, using RANK), ordered by rank.",
+        ordered=True, solution="""
+WITH yearly AS (
+    SELECT p.category,
+           SUM(CASE WHEN o.order_ts < '2025-01-01' THEN oi.quantity * oi.unit_price - oi.discount ELSE 0 END) AS r24,
+           SUM(CASE WHEN o.order_ts >= '2025-01-01' THEN oi.quantity * oi.unit_price - oi.discount ELSE 0 END) AS r25
+    FROM orders o
+    JOIN order_items oi ON oi.order_id = o.order_id
+    JOIN products p     ON p.product_id = oi.product_id
+    WHERE o.status IN ('Delivered','Shipped')
+      AND o.order_ts >= '2024-01-01' AND o.order_ts < '2026-01-01'
+    GROUP BY p.category)
+SELECT category,
+       ROUND(r24) AS revenue_2024,
+       ROUND(r25) AS revenue_2025,
+       ROUND(100.0 * (r25 - r24) / r24, 1) AS yoy_growth_pct,
+       RANK() OVER (ORDER BY (r25 - r24) / r24 DESC) AS growth_rank
+FROM yearly
+ORDER BY growth_rank;
+"""),
 ]

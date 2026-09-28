@@ -1,5 +1,6 @@
 /* JOBPREP_DA SQL Playground: runs SQLite in the browser (sql.js / WebAssembly).
- * Two question sets: the 40 practice questions (#q1…#q40) and the timed mock live-SQL round (#m1…#m7). */
+ * Two question sets: the practice questions (#q1, #q2, …) and the timed mock live-SQL rounds (#m1, #m2, … numbered
+ * globally across rounds; each mock question carries `round`, `round_name` and its number within the round, `num`). */
 (function () {
   "use strict";
   var app = document.getElementById("pg-app");
@@ -38,7 +39,17 @@
   }
   function mmss(sec) { sec = Math.max(0, Math.round(sec)); return Math.floor(sec / 60) + ":" + String(sec % 60).padStart(2, "0"); }
   function isMock(q) { return q && String(q.id).charAt(0) === "m"; }
-  function label(q) { return isMock(q) ? "M" + q.id.slice(1) : "Q" + String(q.id).padStart(2, "0"); }
+  function label(q) {
+    if (!isMock(q)) return "Q" + String(q.id).padStart(2, "0");
+    return q.round ? "R" + q.round + "·Q" + q.num : "M" + q.id.slice(1);
+  }
+  function rounds() {
+    var seen = {}, out = [];
+    state.mock.forEach(function (q) { var r = q.round || 1; if (!seen[r]) { seen[r] = true; out.push({ round: r, name: q.round_name || "Live SQL round" }); } });
+    return out;
+  }
+  function roundQs(r) { return state.mock.filter(function (q) { return (q.round || 1) === r; }); }
+  function range(qs) { return label(qs[0]) + "–" + label(qs[qs.length - 1]); }
 
   function table(columns, rows) {
     var t = el("table", { class: "pg-table" });
@@ -61,6 +72,7 @@
     app.innerHTML = "";
     ui.select = el("select", { class: "pg-select", "aria-label": "Choose a question", onchange: function () { pick(this.value); } });
     ui.progress = el("span", { class: "pg-progress" });
+    ui.roundSel = el("select", { class: "pg-select pg-round-select", "aria-label": "Mock interview round" });
     ui.timerBtn = el("button", { class: "md-button pg-timer-btn", onclick: toggleMock }, ["⏱ Start timed mock (45 min)"]);
     ui.clock = el("span", { class: "pg-clock", "aria-live": "off" });
     ui.prompt = el("div", { class: "pg-prompt" });
@@ -94,7 +106,7 @@
       el("button", { class: "md-button", onclick: next }, ["Next →"])
     ]);
 
-    var top = el("div", { class: "pg-top" }, [ui.select, ui.progress, ui.timerBtn, ui.clock]);
+    var top = el("div", { class: "pg-top" }, [ui.select, ui.progress, ui.roundSel, ui.timerBtn, ui.clock]);
     var main = el("div", { class: "pg-main" }, [ui.prompt, ui.editor, buttons, ui.hints, ui.status, ui.output]);
     var side = el("aside", { class: "pg-side" }, [el("h3", {}, ["Schema"]), ui.schema,
       el("p", { class: "pg-muted" }, ["Click a table to insert its name. Dialect: SQLite — use strftime() and julianday() for dates."])]);
@@ -113,13 +125,13 @@
       });
       ui.select.appendChild(g);
     });
-    if (state.mock.length) {
-      var g = el("optgroup", { label: "🎤 Mock interview: live SQL round" });
-      state.mock.forEach(function (q) {
+    rounds().forEach(function (r) {
+      var g = el("optgroup", { label: "🎤 Mock interview: " + r.name });
+      roundQs(r.round).forEach(function (q) {
         g.appendChild(el("option", { value: q.id }, [(state.progress.solved[q.id] ? "✓ " : "") + label(q) + " · " + q.title + " (≈" + q.minutes + " min)"]));
       });
       ui.select.appendChild(g);
-    }
+    });
     var n = state.questions.filter(function (q) { return state.progress.solved[q.id]; }).length;
     ui.progress.textContent = n + " / " + state.questions.length + " solved";
     if (keep) ui.select.value = keep;
@@ -183,6 +195,7 @@
     ui.hintBtn.disabled = !(q && q.hints && q.hints.length);
     ui.hintBtn.textContent = q && q.hints && q.hints.length ? "💡 Hint (" + q.hints.length + ")" : "💡 Hint";
     ui.select.value = q ? String(q.id) : "0";
+    if (isMock(q) && !state.timer) ui.roundSel.value = String(q.round || 1);
     try { history.replaceState(null, "", q ? (isMock(q) ? "#" + q.id : "#q" + q.id) : "#scratch"); } catch (e) { /* file:// */ }
   }
 
@@ -262,7 +275,7 @@
   }
 
   function next() {
-    var q = state.current, list = isMock(q) ? state.mock : state.questions;
+    var q = state.current, list = isMock(q) ? roundQs(q.round || 1) : state.questions;
     var i = q ? list.indexOf(q) : -1;
     var nxt = list[i + 1];
     pick(nxt ? nxt.id : (isMock(q) ? q.id : 0));
@@ -272,14 +285,17 @@
   function toggleMock() {
     if (state.timer) { endMock(false); return; }
     if (!state.mock.length) return;
-    if (!confirm("Start a 45-minute mock live-SQL round?\n\nWork through M1–M7 in order. Hints and solutions are there, " +
-                 "but they're noted in your summary. Aim for M1–M4 within 30–35 minutes, and think out loud!")) return;
-    state.mock.forEach(function (q) { delete state.progress.drafts[q.id]; });
+    var r = Number(ui.roundSel.value) || 1, qs = roundQs(r), name = (rounds().find(function (x) { return x.round === r; }) || {}).name;
+    if (!qs.length) return;
+    if (!confirm("Start a 45-minute mock: " + name + "?\n\nWork through " + range(qs) + " in order. Hints and solutions are there, " +
+                 "but they're noted in your summary. Aim for " + range(qs.slice(0, 4)) + " within 30–35 minutes, and think out loud!")) return;
+    qs.forEach(function (q) { delete state.progress.drafts[q.id]; });
     save();
-    state.timer = { start: Date.now(), solvedAt: {}, hints: {}, peeked: {}, handle: setInterval(tick, 1000) };
+    state.timer = { round: r, name: name, qs: qs, start: Date.now(), solvedAt: {}, hints: {}, peeked: {}, handle: setInterval(tick, 1000) };
     ui.timerBtn.textContent = "■ End mock";
+    ui.roundSel.disabled = true;
     app.classList.add("pg-mock-running");
-    pick("m1"); tick();
+    pick(qs[0].id); tick();
   }
 
   function tick() {
@@ -295,34 +311,37 @@
     clearInterval(t.handle);
     state.timer = null;
     ui.timerBtn.textContent = "⏱ Start timed mock (45 min)";
+    ui.roundSel.disabled = false;
     ui.clock.textContent = "";
     app.classList.remove("pg-mock-running");
     var elapsed = Math.min(MOCK_MINUTES * 60, (Date.now() - t.start) / 1000);
-    var rows = state.mock.map(function (q) {
+    var rows = t.qs.map(function (q) {
       var solved = q.id in t.solvedAt && !t.peeked[q.id];
       return [label(q) + " · " + q.title, solved ? "✓ " + mmss(t.solvedAt[q.id]) : (t.peeked[q.id] ? "peeked at solution" : "—"),
               String(t.hints[q.id] || 0)];
     });
-    var core = ["m1", "m2", "m3", "m4"];
+    var core = t.qs.slice(0, 4).map(function (q) { return q.id; });
     var coreDone = core.every(function (id) { return id in t.solvedAt && !t.peeked[id] && t.solvedAt[id] <= 35 * 60; });
     var totalHints = Object.keys(t.hints).reduce(function (s, k) { return s + t.hints[k]; }, 0);
-    var n = state.mock.filter(function (q) { return q.id in t.solvedAt && !t.peeked[q.id]; }).length;
+    var n = t.qs.filter(function (q) { return q.id in t.solvedAt && !t.peeked[q.id]; }).length;
     var pass = coreDone && totalHints <= 2;
-    state.progress.mockHistory.push({ date: new Date().toISOString().slice(0, 10), solved: n, minutes: Math.round(elapsed / 60), hints: totalHints, pass: pass });
+    state.progress.mockHistory.push({ date: new Date().toISOString().slice(0, 10), round: t.round, solved: n, total: t.qs.length,
+                                      minutes: Math.round(elapsed / 60), hints: totalHints, pass: pass });
     save();
 
     ui.output.innerHTML = ""; ui.hints.innerHTML = "";
     ui.status.className = "pg-status " + (pass ? "pg-good" : "pg-bad");
-    ui.status.textContent = (timeUp ? "⏰ Time's up! " : "Mock ended. ") + "You solved " + n + " of " + state.mock.length +
+    var bar = range(t.qs.slice(0, 4)) + " within 35 min with ≤ 2 hints";
+    ui.status.textContent = (timeUp ? "⏰ Time's up! " : "Mock ended. ") + t.name + ": you solved " + n + " of " + t.qs.length +
       " in " + mmss(elapsed) + " using " + totalHints + " hint(s). " +
-      (pass ? "Pass signal ✅ (M1–M4 within 35 min, ≤ 2 hints)." : "Not yet a pass signal: the bar is M1–M4 within 35 min with ≤ 2 hints.");
+      (pass ? "Pass signal ✅ (" + bar + ")." : "Not yet a pass signal: the bar is " + bar + ".");
     ui.output.appendChild(el("h4", {}, ["Your scorecard"]));
     ui.output.appendChild(table(["Question", "Solved at", "Hints used"], rows));
     var hist = state.progress.mockHistory.slice(-5).reverse();
     if (hist.length > 1) {
       ui.output.appendChild(el("h4", {}, ["Recent attempts"]));
-      ui.output.appendChild(table(["Date", "Solved", "Minutes", "Hints", "Pass"], hist.map(function (h) {
-        return [h.date, h.solved + " / " + state.mock.length, String(h.minutes), String(h.hints), h.pass ? "✅" : "—"];
+      ui.output.appendChild(table(["Date", "Round", "Solved", "Minutes", "Hints", "Pass"], hist.map(function (h) {
+        return [h.date, String(h.round || 1), h.solved + " / " + (h.total || 7), String(h.minutes), String(h.hints), h.pass ? "✅" : "—"];
       })));
     }
     ui.output.appendChild(el("p", {}, ["Now score yourself on the five rubric dimensions (framing, correctness, communication, business sense, verification) in the mock-interviews README, and review the follow-up questions for anything you skipped."]));
@@ -340,10 +359,12 @@
     state.db = new res[0].Database(new Uint8Array(res[1]));
     state.questions = res[2];
     state.mock = res[3];
+    ui.roundSel.innerHTML = "";
+    rounds().forEach(function (r) { ui.roundSel.appendChild(el("option", { value: String(r.round) }, [r.name + " (" + roundQs(r.round).length + " Qs)"])); });
     fillSelect(); fillSchema();
     var m = /#(q|m)(\d+)/.exec(location.hash);
     pick(m ? (m[1] === "m" ? "m" + m[2] : m[2]) : (/#scratch/.test(location.hash) ? 0 : 1));
-    if (!state.mock.length) ui.timerBtn.style.display = "none";
+    if (!state.mock.length) { ui.timerBtn.style.display = "none"; ui.roundSel.style.display = "none"; }
   }).catch(function (err) {
     ui.status.className = "pg-status pg-bad";
     ui.status.textContent = "Could not load the playground: " + err.message +

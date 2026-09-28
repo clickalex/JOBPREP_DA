@@ -7,6 +7,8 @@ knowing any SQL. Every number in the answer keys was produced by running queries
 | Round | Format | Time | What it simulates |
 |---|---|---|---|
 | [01 · Live SQL round](01-live-sql-round.md) | Shared screen, you write queries out loud | 45 min | The technical screen at most companies |
+| [05 · Live SQL round 2: product & marketing](05-live-sql-round-2.md) | Same format, new questions | 45 min | Coupons, AOV, cohort value, churn, a fan-out trap |
+| [06 · Live SQL round 3: advanced](06-live-sql-round-3.md) | Same format, harder | 45 min | Medians, event sequences, rolling windows, the `NOT IN` NULL trap |
 | [02 · Case round](02-case-round.md) | Whiteboard / conversation, then a few queries | 40 min | "Metric X dropped, what happened?" |
 | [03 · Take-home assignment](03-take-home-assignment.md) | Async, 4-hour time box | 4 h + 20 min review | The take-home many analyst loops include |
 | [04 · Stats & concepts rapid-fire](04-stats-rapid-fire.md) | Quick questions, 60–90 s each | 20 min | The "do you actually understand this" round |
@@ -23,8 +25,9 @@ knowing any SQL. Every number in the answer keys was produced by running queries
 5. **Repeat weekly** from week 6 of the [8-week plan in the main README](../README.md). Swap roles with a study partner;
    interviewing others teaches you what good answers sound like.
 
-Solo? The live SQL round has a **timed, auto-graded version in the
-[SQL Playground](https://clickalex.github.io/JOBPREP_DA/playground/#m1)** (hints, follow-ups and a scorecard included).
+Solo? All three live SQL rounds have **timed, auto-graded versions in the
+[SQL Playground](https://clickalex.github.io/JOBPREP_DA/playground/#m1)** (pick the round next to the timer; hints,
+follow-ups and a scorecard included). Do them in order: round 1 → 2 → 3.
 For the other rounds, record yourself (screen + voice), set a timer, and grade the recording the next day with the rubric.
 
 ## Universal scoring rubric (1–4 per dimension)
