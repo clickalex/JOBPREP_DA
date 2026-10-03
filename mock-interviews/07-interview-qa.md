@@ -6,6 +6,21 @@ A practice set for the **recruiter, hiring-manager, project-discussion and verba
 
 **Target:** Give a specific, structured answer to at least 22 of 30 questions. Score each answer ✓ (clear, specific, credible), ~ (partly answered or too long), or ✗ (unsupported, vague, or no answer to the question). For technical answers, also check correctness, assumptions and validation. Rehearse the ✗ answers again in your own words.
 
+### A useful practice loop
+
+1. **First pass:** answer without looking at the model answer. A partner should ask one follow-up, such as “How did you verify that?” or “What would you do next?”
+2. **Score it:** use the quick rubric below; write one specific piece of evidence from your answer, not just a number.
+3. **Second pass:** review the model answer, note one improvement, then answer again in your own words. Don't memorize the sample wording.
+
+| Dimension | 0 · Missing | 1 · Partial | 2 · Strong |
+|---|---|---|---|
+| **Directness** | Didn't answer the question | Answered indirectly or rambled | Clear answer up front, appropriate length |
+| **Evidence** | Unsupported claim or unclear ownership | Some example, but your contribution or outcome is vague | Specific, truthful example; clear individual contribution and result |
+| **Reasoning & checks** | Guess or unsupported conclusion | Some method, but assumptions or checks are missing | Sound method; names relevant assumptions, edge cases or validation |
+| **Relevance** | No connection to role or decision | Some relevance, limited implication | Connects the answer to the business decision or role |
+
+Score each dimension 0–2 (maximum 8). **6–8:** ready to practise under pressure; **4–5:** tighten the evidence or checks; **0–3:** rebuild the answer. For experience questions, a clearly labelled portfolio or study example is valid; don't invent employment results.
+
 ---
 
 ## Introduction and motivation
@@ -185,4 +200,16 @@ One claim I need to make more precise:
 Next practice date:
 ```
 
-For technical follow-up, use the [live SQL rounds](README.md), [case round](02-case-round.md), and [stats rapid-fire](04-stats-rapid-fire.md). For STAR story planning and resume guidance, see the [behavioral interview chapter](../study-guide/07-behavioral-and-job-search.md).
+### Session scorecard
+
+| Question group | Score (0–8) | Evidence to keep | One change for next time |
+|---|---:|---|---|
+| Introduction & motivation · Q1–4 | | | |
+| Project discussion · Q5–9 | | | |
+| Stakeholders & analysis · Q10–15 | | | |
+| Behaviour & logistics · Q16–20 | | | |
+| Verbal technical · Q21–30 | | | |
+
+Choose **one** answer to repeat before your next mock. A useful debrief is: one thing to keep, one thing to change, and one follow-up question you want to handle better.
+
+For hands-on technical follow-up, use the [live SQL rounds](README.md), [case round](02-case-round.md), and [stats rapid-fire](04-stats-rapid-fire.md). For STAR story planning and resume guidance, see the [behavioral interview chapter](../study-guide/07-behavioral-and-job-search.md).
