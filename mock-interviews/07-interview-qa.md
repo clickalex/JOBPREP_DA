@@ -1,10 +1,10 @@
-# Mock 07 · Data analyst interview Q&A (30–40 minutes)
+# Mock 07 · Data analyst interview Q&A (35–45 minutes)
 
-A practice set for the **recruiter, hiring-manager and project-discussion** parts of an entry-level data analyst loop. It complements the live SQL, case and stats mocks; it is not another coding test.
+A practice set for the **recruiter, hiring-manager, project-discussion and verbal technical** parts of an entry-level data analyst loop. It complements the live SQL, case and stats mocks; it is not a coding test.
 
 **How to use it:** Have a partner ask the questions in order, or record yourself. Aim for **45–90 seconds per answer** (up to 2 minutes for the project walkthrough). Answer first, then open the model answer. The examples are prompts, not scripts: replace them with your real experience and never present a practice project as paid work.
 
-**Target:** Give a specific, structured answer to at least 15 of 20 questions. Score each answer ✓ (clear, specific, credible), ~ (partly answered or too long), or ✗ (unsupported, vague, or no answer to the question). Rehearse the ✗ answers again in your own words.
+**Target:** Give a specific, structured answer to at least 22 of 30 questions. Score each answer ✓ (clear, specific, credible), ~ (partly answered or too long), or ✗ (unsupported, vague, or no answer to the question). For technical answers, also check correctness, assumptions and validation. Rehearse the ✗ answers again in your own words.
 
 ---
 
@@ -114,6 +114,62 @@ Answer logistics accurately and calmly. State your actual notice period and loca
 <details><summary>20. What questions do you have for us?</summary>
 
 Ask two or three questions that help you understand the work: “What would a strong first 90 days look like?” “How does this team agree on metric definitions?” “Can you share an example of an analysis that changed a decision?” “What are the main stakeholders and data tools for this role?” Avoid questions answered clearly on the job page.
+</details>
+
+---
+
+## Verbal technical and analytical questions
+
+For each technical answer, try this order: **define the grain/metric → explain the method → name an edge case → say how you would validate → connect it to the decision.** Interviewers value clear reasoning and checks as much as terminology.
+
+<details><summary>21. A join made your revenue total much larger. What might have happened?</summary>
+
+Check the grain on both sides. Joining orders to multiple order-item rows repeats each order-level amount once per item: a one-to-many **fan-out**. Aggregate the item table to one row per order before joining, or compute order-level and item-level metrics separately. `COUNT(DISTINCT order_id)` can repair a count, but it does not generally repair an inflated `SUM`. Compare row counts and totals before and after the join. See the [SQL joins guide](../study-guide/01-sql.md).
+</details>
+
+<details><summary>22. Explain WHERE vs HAVING. How would you return the top three products in each category?</summary>
+
+`WHERE` filters input rows before aggregation; `HAVING` filters grouped results after aggregation. For top three, first aggregate sales at product/category grain, then rank with `ROW_NUMBER()` or `DENSE_RANK() OVER (PARTITION BY category ORDER BY sales DESC)` and filter the rank in an outer query/CTE. Clarify whether ties should make more than three rows appear. See the [SQL guide](../study-guide/01-sql.md).
+</details>
+
+<details><summary>23. A source has blank values for customer age. Would you replace them with zero?</summary>
+
+Not by default: zero is a real value and would distort averages and age bands. First determine whether blank means unknown, not collected, or not applicable; measure its rate and pattern by source or segment. Keep an explicit missing/unknown category or use a justified imputation only if the analysis calls for it, and report how the choice affects the result. See the [data-cleaning guide](../study-guide/04-python-pandas.md).
+</details>
+
+<details><summary>24. Conversion increased, but revenue per visitor fell. What would you investigate?</summary>
+
+Confirm both metrics use the same population, attribution window and experiment assignment. Then decompose revenue per visitor into conversion × revenue per conversion, and inspect order value, discount, product mix, refunds and cancellations. Check pre-agreed guardrails and uncertainty before recommending a rollout. Don't choose whichever metric looks better; clarify the business objective. See the [metrics guide](../study-guide/06-business-metrics-and-case-studies.md).
+</details>
+
+<details><summary>25. A manager asks for a dashboard. How do you decide what to put on it?</summary>
+
+Start with the audience and decisions: what action will they take, how often, and at what level of detail? Agree on a small set of defined KPIs, useful comparisons and filters; show context and trends, not just isolated totals. Prototype with users, check accessibility/readability, and validate displayed values against a trusted source. Don't start with chart types before understanding the use case. See the [BI guide](../study-guide/05-bi-powerbi-tableau.md).
+</details>
+
+<details><summary>26. What makes a metric definition trustworthy?</summary>
+
+It specifies the numerator, denominator, grain, eligible population, time window, exclusions and source. For example, “monthly active customers” needs an agreed activity event, timezone, identity rule and calendar definition. Check that the implementation matches the written definition, test edge cases, and publish ownership/version changes so different dashboards don't silently redefine it.
+</details>
+
+<details><summary>27. In pandas, a merge unexpectedly doubled your rows. How do you debug it?</summary>
+
+Inspect key uniqueness and the intended relationship on each side. A duplicate join key may make a many-to-many merge; check `duplicated` counts and row counts before/after. Use `merge(..., validate="one_to_one")` or the appropriate one-to-many validation when the data contract allows it, then resolve duplicates based on a documented rule instead of dropping them blindly. See the [pandas guide](../study-guide/04-python-pandas.md).
+</details>
+
+<details><summary>28. Two dashboards report different monthly revenue. What's your first debugging sequence?</summary>
+
+Compare metric definitions, date field/timezone, order statuses, discounts/returns and filters. Then verify table grain and joins for fan-out, and trace one small set of orders through both calculations. Reconcile intermediate totals, agree on the source of truth, and document the resolution. Don't average the two answers or assume one chart is right because it looks familiar.
+</details>
+
+<details><summary>29. A SQL query is slow. What would you try before rewriting everything?</summary>
+
+Use the query plan and table sizes to find the costly scan/join. Select only needed columns, filter early with predicates that can use indexes, check join keys and data types, and aggregate before joining when the grain permits. Measure changes on representative data and confirm the result is unchanged. Avoid claiming an index always helps: writes and storage have costs too. See the [SQL performance section](../study-guide/01-sql.md).
+</details>
+
+<details><summary>30. An A/B test is statistically significant. Is that enough to ship?</summary>
+
+No. Check randomization and sample-ratio mismatch, the pre-specified primary metric, confidence interval/effect size, guardrails, duration and data quality. Ask whether the effect is practically valuable and whether the test was powered for the decision. Segment findings should be treated cautiously unless planned and adequately powered. Recommend a rollout or follow-up based on risk and evidence. See the [statistics guide](../study-guide/03-statistics.md).
 </details>
 
 ---
