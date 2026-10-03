@@ -13,11 +13,13 @@
 
   var controls = h("div", "fc-controls");
   var chapter = h("select"); chapter.setAttribute("aria-label", "Filter by chapter");
+  var search = h("input"); search.type = "search"; search.placeholder = "Search questions or answers";
+  search.setAttribute("aria-label", "Search flashcards");
   var hideKnown = h("label", null, '<input type="checkbox"> hide cards I know');
   var shuffleBtn = h("button", "md-button", "🔀 Shuffle");
-  controls.appendChild(chapter); controls.appendChild(shuffleBtn); controls.appendChild(hideKnown);
+  controls.appendChild(chapter); controls.appendChild(search); controls.appendChild(shuffleBtn); controls.appendChild(hideKnown);
   var card = h("div", "fc-card"); card.setAttribute("tabindex", "0"); card.setAttribute("role", "button");
-  var meta = h("div", "fc-meta");
+  var meta = h("div", "fc-meta"); meta.setAttribute("aria-live", "polite");
   var nav = h("div", "fc-controls");
   var prev = h("button", "md-button", "← Prev"), flip = h("button", "md-button md-button--primary", "Flip"),
       gotIt = h("button", "md-button", "✓ I know this"), nxt = h("button", "md-button", "Next →");
@@ -27,12 +29,23 @@
 
   function rebuild() {
     var ch = chapter.value, hk = hideKnown.querySelector("input").checked;
-    deck = all.filter(function (c) { return (ch === "all" || c.chapter === ch) && !(hk && known[c.id]); });
+    var query = search.value.trim().toLocaleLowerCase();
+    deck = all.filter(function (c) {
+      var text = (c.question + " " + c.answer_html.replace(/<[^>]*>/g, " ") + " " + c.chapter).toLocaleLowerCase();
+      return (ch === "all" || c.chapter === ch) && !(hk && known[c.id]) && (!query || text.indexOf(query) !== -1);
+    });
     i = 0; render();
   }
   function render() {
-    if (!deck.length) { card.innerHTML = '<div class="fc-text">No cards here — you know them all! 🎉</div>'; meta.textContent = ""; return; }
+    if (!deck.length) {
+      card.setAttribute("aria-disabled", "true");
+      card.innerHTML = '<div class="fc-text">No matching cards. Clear the search, choose another chapter, or adjust “hide cards I know”.</div>';
+      meta.textContent = "0 matching cards"; return;
+    }
     var c = deck[i];
+    card.setAttribute("aria-disabled", "false");
+    card.setAttribute("aria-pressed", String(flipped));
+    card.setAttribute("aria-label", (flipped ? "Answer for: " : "Reveal answer for: ") + c.question);
     card.className = "fc-card" + (flipped ? " fc-back" : "");
     card.innerHTML = '<div class="fc-side">' + (flipped ? "Answer" : "Question") + " · " + c.chapter + '</div><div class="fc-text">' +
       (flipped ? c.answer_html : c.question) + "</div>";
@@ -41,9 +54,12 @@
       (known[c.id] ? " · ✓ this one" : "") + "</span>";
   }
   function go(d) { if (!deck.length) return; i = (i + d + deck.length) % deck.length; flipped = false; render(); }
-  function doFlip() { flipped = !flipped; render(); }
+  function doFlip() { if (!deck.length) return; flipped = !flipped; render(); }
 
   card.addEventListener("click", doFlip);
+  card.addEventListener("keydown", function (e) {
+    if (e.key === "Enter") { e.preventDefault(); doFlip(); }
+  });
   flip.addEventListener("click", doFlip);
   prev.addEventListener("click", function () { go(-1); });
   nxt.addEventListener("click", function () { go(1); });
@@ -56,6 +72,7 @@
     i = 0; flipped = false; render();
   });
   chapter.addEventListener("change", rebuild);
+  search.addEventListener("input", rebuild);
   hideKnown.querySelector("input").addEventListener("change", rebuild);
   document.addEventListener("keydown", function (e) {
     if (e.target.tagName === "INPUT" || e.target.tagName === "SELECT" || e.target.tagName === "TEXTAREA") return;
