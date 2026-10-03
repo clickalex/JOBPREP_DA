@@ -20,8 +20,8 @@ dashboard kit. Everything runs on one realistic dataset, so skills build on each
 | 🗄️ **SQL practice** | 60 questions, Easy → Hard, auto-graded, locally or [in the browser](https://clickalex.github.io/JOBPREP_DA/playground/) | [`practice/sql/`](practice/sql/) |
 | 🐍 **Python practice** | 25 pandas/stats exercises, auto-graded | [`practice/python/`](practice/python/) |
 | 📊 **Excel practice** | 20-task workbook that grades itself | [`practice/excel/`](practice/excel/) |
-| 🎤 **Mock interviews** | Three live SQL rounds (core, product & marketing, advanced; all also available as [timed, auto-graded mocks](https://clickalex.github.io/JOBPREP_DA/playground/#m1)), case round, take-home, stats rapid-fire, all with scripts and rubrics | [`mock-interviews/`](mock-interviews/) |
-| 🃏 **Flashcards** | 54 interview Q&As from the study guide (web + Anki import) | [`study-guide/flashcards.csv`](study-guide/flashcards.csv) |
+| 🎤 **Mock interviews** | Three live SQL rounds (core, product & marketing, advanced; all also available as [timed, auto-graded mocks](https://clickalex.github.io/JOBPREP_DA/playground/#m1)), case round, take-home and stats rapid-fire (scripts + rubrics), plus [20 general interview Q&As](mock-interviews/07-interview-qa.md) | [`mock-interviews/`](mock-interviews/) |
+| 🃏 **Flashcards** | 60 interview Q&As from the study guide (web + Anki import) | [`study-guide/flashcards.csv`](study-guide/flashcards.csv) |
 | 💼 **Portfolio project** | Cleaning → analysis → A/B test → recommendations → dashboard | [`portfolio/shopkart-growth-analysis/`](portfolio/shopkart-growth-analysis/) |
 | 🧾 **Dataset** | ShopKart, a fictional Indian e-commerce company (8k customers, 12k orders, clickstream, A/B test) | [`data/`](data/) |
 
@@ -103,7 +103,7 @@ JOBPREP_DA/
 │   ├── sql/                     # EXERCISES.md · my_answers/ · check.py · SOLUTIONS.md
 │   ├── python/                  # exercises.py · check.py · solutions.py · data_loader.py
 │   └── excel/                   # ShopKart_Excel_Practice.xlsx · build_workbook.py
-├── mock-interviews/             # interviewer scripts + rubrics (SQL, case, take-home, stats)
+├── mock-interviews/             # interviewer scripts + rubrics (SQL, case, take-home, stats, general interview Q&A)
 ├── portfolio/shopkart-growth-analysis/
 │   ├── README.md                # the case-study write-up
 │   ├── analysis.ipynb           # executed notebook

@@ -1,0 +1,132 @@
+# Mock 07 · Data analyst interview Q&A (30–40 minutes)
+
+A practice set for the **recruiter, hiring-manager and project-discussion** parts of an entry-level data analyst loop. It complements the live SQL, case and stats mocks; it is not another coding test.
+
+**How to use it:** Have a partner ask the questions in order, or record yourself. Aim for **45–90 seconds per answer** (up to 2 minutes for the project walkthrough). Answer first, then open the model answer. The examples are prompts, not scripts: replace them with your real experience and never present a practice project as paid work.
+
+**Target:** Give a specific, structured answer to at least 15 of 20 questions. Score each answer ✓ (clear, specific, credible), ~ (partly answered or too long), or ✗ (unsupported, vague, or no answer to the question). Rehearse the ✗ answers again in your own words.
+
+---
+
+## Introduction and motivation
+
+<details><summary>1. Tell me about yourself.</summary>
+
+Use **present → relevant past → why this role**. Keep it to about a minute: “I’m building my data-analysis skills in SQL, Python and Power BI. In a portfolio project, I analysed a fictional e-commerce dataset, checked the data quality, and translated the findings into recommendations. My background in [real study/work experience] taught me [relevant skill]. I’m interested in this role because [specific product, team or problem].” Swap every bracket for a true detail; don't recite your whole CV.
+</details>
+
+<details><summary>2. Why do you want to be a data analyst?</summary>
+
+Connect curiosity to decisions: “I enjoy turning an unclear question into evidence someone can act on. In [a real example], I [what you did] and learned [what changed]. I’ve since practised [relevant tools/project], and I want to build that skill on real business problems.” Avoid relying on “I like numbers” alone.
+</details>
+
+<details><summary>3. Why this company and this role?</summary>
+
+Show that you researched the company: name its product or customer, a plausible business question, and how the role fits your skills. For example: “I saw that [specific product/channel] is important to your business. I’d be interested in how the team measures [relevant funnel/retention/operations outcome]. This role’s mix of [actual job requirements] matches the work I’ve practised in [true example].” Don't claim inside knowledge or invent recent company news.
+</details>
+
+<details><summary>4. What are you looking for in your first analyst role?</summary>
+
+“I’m looking for a role where I can own well-scoped analysis end to end: clarify the decision, prepare reliable data, communicate the result, and learn from feedback. I’d also like to build depth in [one or two skills relevant to this job].” Keep it focused on the work and contribution, not only training or promotion.
+</details>
+
+## Project discussion
+
+<details><summary>5. Walk me through a project you’re proud of.</summary>
+
+Use **question → data → method → finding → action → limitation**. Keep the setup short, be precise about what *you* did, and finish with a result or recommendation. For the ShopKart portfolio, say it is a synthetic dataset: one example is finding that the checkout-test improvement was concentrated in the App, so you would recommend a guarded rollout there and a separate investigation of the Web experience. Don't imply the recommendation was deployed in a real company.
+</details>
+
+<details><summary>6. How did you know the data was reliable enough to analyse?</summary>
+
+“I checked the grain and key fields, duplicates, missing values, valid ranges and date coverage. I reconciled row counts and important totals before and after cleaning, then documented exclusions and assumptions. I’d still label any remaining limitations rather than calling the data perfect.” Give one concrete check from your project.
+</details>
+
+<details><summary>7. What was the most surprising finding in your project?</summary>
+
+State the finding, why you didn't expect it, and how you validated it. Example: “The overall checkout result hid a device difference. I checked the segment counts and conversion definitions before recommending an App-focused follow-up. Because it is a subgroup result, I’d treat it cautiously and verify it in a planned test.” Use a genuine finding and do not overstate causality.
+</details>
+
+<details><summary>8. What would you do differently if you had another week?</summary>
+
+Name a specific improvement and its value: validate the result on a new period, improve the metric definition, add a stakeholder review, test a recommendation, or automate a repeated step. Explain what risk it addresses. Avoid saying “nothing” or adding complexity without a purpose.
+</details>
+
+<details><summary>9. Tell me about a project limitation or assumption.</summary>
+
+Be direct: identify the assumption, describe how it could bias the result, and say what data or test would reduce the uncertainty. For a synthetic portfolio, say explicitly that the data and business outcome are fictional; the project demonstrates a workflow, not a real-world impact claim.
+</details>
+
+## Working with data and stakeholders
+
+<details><summary>10. A stakeholder says your number is wrong. What do you do?</summary>
+
+Assume good intent. Ask which number and decision they mean, then compare definitions, date ranges, filters, status handling and join grain. Reconcile against a trusted source at row level if needed. Share what changed and document the agreed definition so the mismatch is less likely to recur.
+</details>
+
+<details><summary>11. How would you explain a technical result to a non-technical audience?</summary>
+
+Lead with the decision and impact, then give the evidence and caveat in plain language. For example: “The new checkout increased App conversion in this test; the overall gain came mainly from App users. I recommend a guarded App rollout while we investigate Web. This result does not establish that the change will improve every device segment.” Invite questions and keep technical detail available, not in the headline.
+</details>
+
+<details><summary>12. You get a vague request for a dashboard by tomorrow. What do you do?</summary>
+
+Ask what decision it supports, who will use it, which metric and timeframe matter, and what action follows. Agree on a small version-one scope and delivery time; share a sketch or sample early. Don't silently build a large dashboard from assumptions.
+</details>
+
+<details><summary>13. Two managers both say their requests are urgent. How do you prioritize?</summary>
+
+Clarify each request’s decision, real deadline, impact and effort. Tell both stakeholders what you can deliver and when, and ask your manager to resolve the trade-off if priorities conflict. Offer a quick, clearly labelled partial answer when it unblocks a decision; don't promise two full deliverables at once.
+</details>
+
+<details><summary>14. What do you do when a dataset has missing or inconsistent values?</summary>
+
+Profile where and how often the issue occurs, check whether it is concentrated by time, source or segment, and ask how the field is generated. Choose a treatment based on the analysis—fix at source, exclude, impute, or retain as unknown—then quantify the impact and document it. Don't automatically replace missing values with zero.
+</details>
+
+<details><summary>15. How do you make sure your analysis is accurate?</summary>
+
+Use checks at several levels: validate inputs and definitions, inspect joins and row counts, test edge cases and NULLs, reconcile key totals to a trusted source, and have someone review critical logic. After delivery, monitor whether the metric behaves as expected. Name the checks you actually used rather than claiming analysis is error-free.
+</details>
+
+## Behaviour, growth and logistics
+
+<details><summary>16. Tell me about a mistake you made.</summary>
+
+Choose a real, bounded mistake. Explain the impact, how you surfaced it, the correction, and the safeguard you added. A strong answer takes ownership (“I double-counted a one-to-many join”), not blame, and does not pretend the mistake was secretly a success.
+</details>
+
+<details><summary>17. Tell me about difficult feedback you received.</summary>
+
+Describe the feedback without arguing, the specific change you made, and what happened next. If you disagree with feedback, explain how you asked clarifying questions and tested the advice respectfully. Use an actual example from work, study or a project.
+</details>
+
+<details><summary>18. What is one skill you are currently improving?</summary>
+
+Pick a real skill relevant to the job, explain what you're doing to improve it, and give a way you measure progress. Example structure: “I used to [specific gap]. I now [practice or feedback loop], and I can see progress when [observable result].” Avoid disguised strengths such as “I work too hard.”
+</details>
+
+<details><summary>19. What are your notice period, location and compensation expectations?</summary>
+
+Answer logistics accurately and calmly. State your actual notice period and location constraints. For compensation, research the role, city and level; if asked first, give a realistic range based on that research and say you’re open to discussing the full package. If you need the employer’s range to calibrate, ask politely. Never invent a competing offer or current salary.
+</details>
+
+<details><summary>20. What questions do you have for us?</summary>
+
+Ask two or three questions that help you understand the work: “What would a strong first 90 days look like?” “How does this team agree on metric definitions?” “Can you share an example of an analysis that changed a decision?” “What are the main stakeholders and data tools for this role?” Avoid questions answered clearly on the job page.
+</details>
+
+---
+
+## Debrief
+
+```text
+Date / role:
+Answers I explained clearly:
+Answers that were too vague or long:
+One real example I should prepare:
+One claim I need to make more precise:
+Next practice date:
+```
+
+For technical follow-up, use the [live SQL rounds](README.md), [case round](02-case-round.md), and [stats rapid-fire](04-stats-rapid-fire.md). For STAR story planning and resume guidance, see the [behavioral interview chapter](../study-guide/07-behavioral-and-job-search.md).

@@ -12,6 +12,7 @@ knowing any SQL. Every number in the answer keys was produced by running queries
 | [02 · Case round](02-case-round.md) | Whiteboard / conversation, then a few queries | 40 min | "Metric X dropped, what happened?" |
 | [03 · Take-home assignment](03-take-home-assignment.md) | Async, 4-hour time box | 4 h + 20 min review | The take-home many analyst loops include |
 | [04 · Stats & concepts rapid-fire](04-stats-rapid-fire.md) | Quick questions, 60–90 s each | 20 min | The "do you actually understand this" round |
+| [07 · Data analyst interview Q&A](07-interview-qa.md) | Recruiter, project and behavioral questions | 30–40 min | Practise concise, credible answers for common non-coding rounds |
 
 ## How to run a mock
 
