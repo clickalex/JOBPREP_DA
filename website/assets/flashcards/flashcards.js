@@ -1,4 +1,4 @@
-/* JOBPREP_DA flashcards: interview Q&A drawn from the study guide. Click/Space to flip, ←/→ to move. */
+/* JOBPREP_DA flashcards: study-guide and interview-mock Q&A. Click/Space to flip, ←/→ to move. */
 (function () {
   "use strict";
   var app = document.getElementById("fc-app");

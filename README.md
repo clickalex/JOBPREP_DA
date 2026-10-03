@@ -21,7 +21,7 @@ dashboard kit. Everything runs on one realistic dataset, so skills build on each
 | 🐍 **Python practice** | 25 pandas/stats exercises, auto-graded | [`practice/python/`](practice/python/) |
 | 📊 **Excel practice** | 20-task workbook that grades itself | [`practice/excel/`](practice/excel/) |
 | 🎤 **Mock interviews** | Three live SQL rounds (core, product & marketing, advanced; all also available as [timed, auto-graded mocks](https://clickalex.github.io/JOBPREP_DA/playground/#m1)), case round, take-home and stats rapid-fire (scripts + rubrics), plus [40 general, technical and judgement interview Q&As](mock-interviews/07-interview-qa.md) | [`mock-interviews/`](mock-interviews/) |
-| 🃏 **Flashcards** | 60 interview Q&As from the study guide (web + Anki import) | [`study-guide/flashcards.csv`](study-guide/flashcards.csv) |
+| 🃏 **Flashcards** | 100 Q&As: 60 study-guide cards + 40 interview-mock answers (web + Anki import) | [`study-guide/flashcards.csv`](study-guide/flashcards.csv) |
 | 💼 **Portfolio project** | Cleaning → analysis → A/B test → recommendations → dashboard | [`portfolio/shopkart-growth-analysis/`](portfolio/shopkart-growth-analysis/) |
 | 🧾 **Dataset** | ShopKart, a fictional Indian e-commerce company (8k customers, 12k orders, clickstream, A/B test) | [`data/`](data/) |
 
