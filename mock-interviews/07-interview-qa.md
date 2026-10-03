@@ -1,10 +1,10 @@
-# Mock 07 · Data analyst interview Q&A (35–45 minutes)
+# Mock 07 · Data analyst interview Q&A (45–60 minutes)
 
 A practice set for the **recruiter, hiring-manager, project-discussion and verbal technical** parts of an entry-level data analyst loop. It complements the live SQL, case and stats mocks; it is not a coding test.
 
 **How to use it:** Have a partner ask the questions in order, or record yourself. Aim for **45–90 seconds per answer** (up to 2 minutes for the project walkthrough). Answer first, then open the model answer. The examples are prompts, not scripts: replace them with your real experience and never present a practice project as paid work.
 
-**Target:** Give a specific, structured answer to at least 22 of 30 questions. Score each answer ✓ (clear, specific, credible), ~ (partly answered or too long), or ✗ (unsupported, vague, or no answer to the question). For technical answers, also check correctness, assumptions and validation. Rehearse the ✗ answers again in your own words.
+**Target:** Give a specific, structured answer to at least 28 of 40 questions. Score each answer ✓ (clear, specific, credible), ~ (partly answered or too long), or ✗ (unsupported, vague, or no answer to the question). For technical answers, also check correctness, assumptions and validation. Rehearse the ✗ answers again in your own words.
 
 ### A useful practice loop
 
@@ -230,6 +230,62 @@ Prepare six short examples you can adapt. An example may come from employment, v
 
 ---
 
+## Situational judgement, integrity and communication
+
+These scenarios test how you protect trust while still helping the business. State what you would do first, who needs to know, and how you would document the decision.
+
+<details><summary>31. A stakeholder asks you to remove two bad weeks so the trend looks better. How do you respond?</summary>
+
+Ask why those weeks should be excluded and apply a consistent, defensible rule—not a desired outcome. Show the full period alongside any clearly labelled sensitivity analysis, explain the effect of exclusions, and document the decision. If you suspect deliberate misrepresentation, follow the company's escalation process.
+</details>
+
+<details><summary>32. You discover identifiable customer information in a spreadsheet shared too broadly. What do you do?</summary>
+
+Stop further sharing if you can do so within your access, preserve the relevant context, and report it promptly through the company's privacy/security incident process. Follow instructions on containment and notification; don't forward the data, copy it elsewhere, or investigate beyond your authorization. Share only the minimum necessary information.
+</details>
+
+<details><summary>33. A properly run experiment has p = 0.4. Can you say the variants perform the same?</summary>
+
+No. Say the test did not provide sufficient evidence of a difference. Report the estimated effect and confidence interval, compare the interval with the smallest business-relevant effect, and explain whether the planned sample size could answer the question. A follow-up may be worthwhile if uncertainty remains decision-relevant; don't describe a non-significant result as proof of equality.
+</details>
+
+<details><summary>34. You notice a material error in a report after it has been sent. What next?</summary>
+
+Tell the recipients and decision owner promptly, identify which result is affected, and send a corrected version with a clear note. Assess whether a decision was already made using the wrong figure. Then find the cause and add a proportionate check, such as a reconciliation or peer review. Don't silently replace the file or wait for someone else to notice.
+</details>
+
+<details><summary>35. A dashboard is accurate, but hardly anyone uses it. How would you improve adoption?</summary>
+
+Talk with intended users and observe the decision workflow: is the dashboard hard to find, slow, unclear, untrusted, or unrelated to an action? Check usage data if available, then improve the highest-impact issue with users and measure whether it helps. A more polished chart won't fix a metric users don't need.
+</details>
+
+<details><summary>36. When is it appropriate to use a generative AI tool for analysis?</summary>
+
+Follow company policy first. Never put confidential or personal data into an unapproved service. Treat generated code and explanations as suggestions: inspect the logic, test edge cases, verify outputs against the source data, and disclose AI assistance if required. You remain responsible for the analysis and its conclusions.
+</details>
+
+<details><summary>37. An unplanned customer segment shows a very large lift in your experiment. How do you present it?</summary>
+
+Label it exploratory, not a confirmed win. Check segment size, assignment and data quality; report the estimate and uncertainty, and mention that examining many segments raises false-positive risk. Suggest a pre-planned, adequately powered follow-up if the finding could change a decision.
+</details>
+
+<details><summary>38. The job requires a tool you have never used. How would you answer?</summary>
+
+Be transparent about your level of experience. Connect the underlying skill you do have (for example, SQL or a similar BI tool), describe how you'd approach learning it, and give a concrete example of learning a tool before. If asked a practical question, reason from first principles rather than pretending to know its syntax.
+</details>
+
+<details><summary>39. You realize you may miss a deadline for an analysis. What do you do?</summary>
+
+Raise the risk as soon as you can, explain what is complete and what is blocked, and agree on a revised scope or deadline. Offer a smaller validated answer if it supports the immediate decision, clearly label its limitations, and follow up with the full analysis. Don't go silent or trade correctness for an unannounced deadline.
+</details>
+
+<details><summary>40. A team wants to use sensitive customer attributes to target offers. What would you consider?</summary>
+
+Clarify the purpose and necessity, then follow privacy, legal and company policies before accessing or using those attributes. Consider whether a less sensitive or aggregated alternative works, whether the data is representative, and whether targeting could create unfair outcomes. Raise unresolved risks with the appropriate privacy, legal or governance owner rather than making the call alone.
+</details>
+
+---
+
 ## Debrief
 
 ```text
@@ -250,6 +306,7 @@ Next practice date:
 | Stakeholders & analysis · Q10–15 | | | |
 | Behaviour & logistics · Q16–20 | | | |
 | Verbal technical · Q21–30 | | | |
+| Situational judgement · Q31–40 | | | |
 
 Choose **one** answer to repeat before your next mock. A useful debrief is: one thing to keep, one thing to change, and one follow-up question you want to handle better.
 
