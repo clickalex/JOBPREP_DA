@@ -189,6 +189,47 @@ No. Check randomization and sample-ratio mismatch, the pre-specified primary met
 
 ---
 
+## Before the interview: tailoring worksheet
+
+Use this once for each role. It helps you tailor answers without pretending to have experience or company knowledge you don't have.
+
+### Role and evidence
+
+| Job requirement (quote or paraphrase) | My truthful evidence | What I still need to learn |
+|---|---|---|
+| 1. | | |
+| 2. | | |
+| 3. | | |
+
+### Company and role research
+
+```text
+Company / product / customer:
+One business outcome this team likely cares about:
+Evidence for that assumption (job post, public product info, etc.):
+Why this role fits my real interests and skills:
+Two questions I want to ask the interviewer:
+```
+
+Treat business outcomes as informed hypotheses, not facts, unless the company has published them. Avoid inventing internal tools, metrics, or recent events.
+
+### Build a reusable STAR story bank
+
+Prepare six short examples you can adapt. An example may come from employment, volunteering, coursework or a clearly labelled portfolio project. Keep your personal contribution distinct from the team's work.
+
+| Story theme | Situation / task (one line) | My actions (specific) | Result / evidence | Learning or follow-up |
+|---|---|---|---|---|
+| Insight that changed a decision | | | | |
+| Messy data or quality issue | | | | |
+| Tight deadline / prioritisation | | | | |
+| Explaining analysis to someone | | | | |
+| Mistake or difficult feedback | | | | |
+| Disagreement / collaboration | | | | |
+
+**Claim check before you rehearse:** Can I explain where each number came from? Did I personally do the action I'm describing? Is the result observed, estimated, or hypothetical? Have I labelled portfolio data as synthetic where relevant? If the answer to any is unclear, qualify the claim or leave it out.
+
+---
+
 ## Debrief
 
 ```text
