@@ -122,6 +122,13 @@ def test_browser_playground_grader_with_sqljs(staged):
     assert r.returncode == 0, r.stdout + r.stderr
 
 
+@pytest.mark.skipif(shutil.which("node") is None, reason="node not installed")
+def test_flashcard_controls_with_node():
+    r = subprocess.run(["node", "tests/flashcards.test.js"], cwd=ROOT, capture_output=True, text=True, encoding="utf-8")
+    assert r.returncode == 0, r.stdout + r.stderr
+    assert "hide-known passed" in r.stdout
+
+
 def test_mkdocs_strict_build(staged, tmp_path):
     pytest.importorskip("mkdocs")
     pytest.importorskip("material")
