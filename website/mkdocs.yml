@@ -81,6 +81,7 @@ nav:
       - Case round: mock-interviews/02-case-round.md
       - Take-home assignment: mock-interviews/03-take-home-assignment.md
       - Stats rapid-fire: mock-interviews/04-stats-rapid-fire.md
+      - Interview Q&A: mock-interviews/07-interview-qa.md
   - Portfolio project:
       - Case study: portfolio/shopkart-growth-analysis/README.md
       - Dashboard kit: portfolio/shopkart-growth-analysis/dashboard/README.md
