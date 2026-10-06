@@ -68,14 +68,16 @@ async function main() {
     getItem: (key) => storage.get(key) || null,
     setItem: (key, value) => storage.set(key, value),
   };
+  let confirmAnswer = false;
+  const window = { confirm: (message) => { assert.equal(message, "Reset all marked-known flashcards?"); return confirmAnswer; } };
   const fetch = async () => ({ json: async () => cards });
   const source = fs.readFileSync("website/assets/flashcards/flashcards.js", "utf8");
-  vm.runInNewContext(source, { document, localStorage, fetch, Array, JSON, Math, String });
+  vm.runInNewContext(source, { document, localStorage, window, fetch, Array, JSON, Math, String });
   await new Promise((resolve) => setImmediate(resolve));
 
   const [wrap] = document.app.children;
   const [controls, card, meta, nav] = wrap.children;
-  const [chapter, search, shuffle, hideKnown] = controls.children;
+  const [chapter, search, shuffle, hideKnown, reset] = controls.children;
   const [prev, flip, know, next] = nav.children;
   assert.match(meta.innerHTML, /Card 1 \/ 2/);
   assert.equal(chapter.value, "all");
@@ -109,9 +111,17 @@ async function main() {
   assert.match(meta.innerHTML, /Card 1 \/ 1/);
   assert.match(card.innerHTML, /What is a window function/);
 
+  reset.click(); // confirmation is cancelled; progress remains
+  assert.match(meta.innerHTML, /1 \/ 2 marked known/);
+  confirmAnswer = true;
+  reset.click();
+  assert.equal(storage.get("jobprep-flashcards-v1"), "{}");
+  assert.match(meta.innerHTML, /Card 1 \/ 2/);
+  assert.match(meta.innerHTML, /0 \/ 2 marked known/);
+
   // Keep references alive so lint-like checks catch accidentally disconnected controls.
-  assert.ok(prev && next && flip && shuffle);
-  console.log("flashcards: search, empty state, keyboard flip, and hide-known passed");
+  assert.ok(prev && next && flip && shuffle && reset);
+  console.log("flashcards: search, empty state, keyboard flip, hide-known, and reset passed");
 }
 
 main().catch((error) => { console.error(error); process.exitCode = 1; });

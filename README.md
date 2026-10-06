@@ -144,7 +144,7 @@ Once the workflows are activated ([`ci/README.md`](ci/README.md)), every push an
 * all 60 SQL and 25 pandas reference solutions pass their graders, and the graders reject wrong answers
   (wrong values, wrong row order, wrong column count);
 * the browser playground's grader passes all 60 practice and 19 mock-interview solutions inside **sql.js** (Node, headless);
-* the flashcards' search, empty state, keyboard flip and hide-known controls pass a Node smoke test;
+* the flashcards' search, empty state, keyboard flip, hide-known and confirmed-reset controls pass a Node smoke test;
 * every Excel Answer Key formula is evaluated by a formula engine and matches the expected answer;
 * the portfolio notebook executes top to bottom;
 * every relative link and `#anchor` in the markdown resolves, and the website builds with `--strict`.

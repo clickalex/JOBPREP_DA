@@ -126,7 +126,7 @@ def test_browser_playground_grader_with_sqljs(staged):
 def test_flashcard_controls_with_node():
     r = subprocess.run(["node", "tests/flashcards.test.js"], cwd=ROOT, capture_output=True, text=True, encoding="utf-8")
     assert r.returncode == 0, r.stdout + r.stderr
-    assert "hide-known passed" in r.stdout
+    assert "hide-known, and reset passed" in r.stdout
 
 
 def test_mkdocs_strict_build(staged, tmp_path):

@@ -17,7 +17,9 @@
   search.setAttribute("aria-label", "Search flashcards");
   var hideKnown = h("label", null, '<input type="checkbox"> hide cards I know');
   var shuffleBtn = h("button", "md-button", "🔀 Shuffle");
-  controls.appendChild(chapter); controls.appendChild(search); controls.appendChild(shuffleBtn); controls.appendChild(hideKnown);
+  var resetBtn = h("button", "md-button", "Reset known");
+  resetBtn.setAttribute("aria-label", "Reset all marked-known flashcards");
+  controls.appendChild(chapter); controls.appendChild(search); controls.appendChild(shuffleBtn); controls.appendChild(hideKnown); controls.appendChild(resetBtn);
   var card = h("div", "fc-card"); card.setAttribute("tabindex", "0"); card.setAttribute("role", "button");
   var meta = h("div", "fc-meta"); meta.setAttribute("aria-live", "polite");
   var nav = h("div", "fc-controls");
@@ -66,6 +68,12 @@
   gotIt.addEventListener("click", function () {
     if (!deck.length) return; var id = deck[i].id; known[id] = !known[id]; saveKnown();
     if (hideKnown.querySelector("input").checked) rebuild(); else render();
+  });
+  resetBtn.addEventListener("click", function () {
+    if (!Object.keys(known).some(function (id) { return known[id]; })) return;
+    if (window.confirm("Reset all marked-known flashcards?")) {
+      known = {}; saveKnown(); rebuild();
+    }
   });
   shuffleBtn.addEventListener("click", function () {
     for (var k = deck.length - 1; k > 0; k--) { var j = Math.floor(Math.random() * (k + 1)); var t = deck[k]; deck[k] = deck[j]; deck[j] = t; }
