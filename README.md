@@ -16,7 +16,7 @@ dashboard kit. Everything runs on one realistic dataset, so skills build on each
 
 | | What's inside | Start here |
 |---|---|---|
-| 📚 **Study guide** | 7 chapters: concepts, cheat sheets, pitfalls, interview Q&A | [`study-guide/`](study-guide/) |
+| 📚 **Study guide** | 8 chapters: core DA skills, interview Q&A, plus a roadmap crosswalk covering APIs, R, machine learning and optional big-data topics | [`study-guide/`](study-guide/) |
 | 🗄️ **SQL practice** | 60 questions, Easy → Hard, auto-graded, locally or [in the browser](https://clickalex.github.io/JOBPREP_DA/playground/) | [`practice/sql/`](practice/sql/) |
 | 🐍 **Python practice** | 25 pandas/stats exercises, auto-graded | [`practice/python/`](practice/python/) |
 | 📊 **Excel practice** | 20-task workbook that grades itself | [`practice/excel/`](practice/excel/) |
@@ -59,6 +59,7 @@ dashboard CSVs in Power BI / Tableau.
 | 05 | [Power BI & Tableau](study-guide/05-bi-powerbi-tableau.md) | star schema, **DAX & CALCULATE**, time intelligence, LODs, order of operations, design principles |
 | 06 | [Business metrics & cases](study-guide/06-business-metrics-and-case-studies.md) | e-commerce/SaaS metrics, metric trees, "metric dropped" framework, guesstimates |
 | 07 | [Behavioral & job search](study-guide/07-behavioral-and-job-search.md) | hiring process, STAR stories, resume/ATS, portfolio, India job-search notes |
+| 08 | [Roadmap crosswalk & extensions](study-guide/08-data-analyst-roadmap-crosswalk.md) | coverage check against roadmap.sh; APIs, R, ML evaluation, big-data orientation and optional project ideas |
 
 ## An 8-week plan (≈ 10–12 hours/week)
 
@@ -98,7 +99,7 @@ JOBPREP_DA/
 │   ├── shopkart.db              # SQLite database (SQL practice)
 │   ├── clean/*.csv              # analysis-ready tables
 │   └── raw/*.csv                # messy exports (cleaning practice)
-├── study-guide/                 # 7 chapters
+├── study-guide/                 # 8 chapters
 ├── practice/
 │   ├── sql/                     # EXERCISES.md · my_answers/ · check.py · SOLUTIONS.md
 │   ├── python/                  # exercises.py · check.py · solutions.py · data_loader.py

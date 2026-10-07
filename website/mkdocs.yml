@@ -65,6 +65,7 @@ nav:
       - Power BI & Tableau: study-guide/05-bi-powerbi-tableau.md
       - Business metrics & cases: study-guide/06-business-metrics-and-case-studies.md
       - Behavioral & job search: study-guide/07-behavioral-and-job-search.md
+      - Roadmap crosswalk & extensions: study-guide/08-data-analyst-roadmap-crosswalk.md
   - Practice:
       - SQL Playground (in browser): playground/index.md
       - SQL exercises: practice/sql/EXERCISES.md
