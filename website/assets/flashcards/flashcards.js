@@ -13,13 +13,18 @@
 
   var controls = h("div", "fc-controls");
   var chapter = h("select"); chapter.setAttribute("aria-label", "Filter by chapter");
+  var sessionSize = h("select"); sessionSize.setAttribute("aria-label", "Session size");
+  [["all", "All matching cards"], ["10", "10-card session"], ["25", "25-card session"]].forEach(function (item) {
+    var option = h("option", null, item[1]); option.value = item[0]; sessionSize.appendChild(option);
+  });
   var search = h("input"); search.type = "search"; search.placeholder = "Search questions or answers";
   search.setAttribute("aria-label", "Search flashcards");
   var hideKnown = h("label", null, '<input type="checkbox"> hide cards I know');
   var shuffleBtn = h("button", "md-button", "🔀 Shuffle");
   var resetBtn = h("button", "md-button", "Reset known");
   resetBtn.setAttribute("aria-label", "Reset all marked-known flashcards");
-  controls.appendChild(chapter); controls.appendChild(search); controls.appendChild(shuffleBtn); controls.appendChild(hideKnown); controls.appendChild(resetBtn);
+  controls.appendChild(chapter); controls.appendChild(sessionSize); controls.appendChild(search);
+  controls.appendChild(shuffleBtn); controls.appendChild(hideKnown); controls.appendChild(resetBtn);
   var card = h("div", "fc-card"); card.setAttribute("tabindex", "0"); card.setAttribute("role", "button");
   var meta = h("div", "fc-meta"); meta.setAttribute("aria-live", "polite");
   var nav = h("div", "fc-controls");
@@ -36,7 +41,12 @@
       var text = (c.question + " " + c.answer_html.replace(/<[^>]*>/g, " ") + " " + c.chapter).toLocaleLowerCase();
       return (ch === "all" || c.chapter === ch) && !(hk && known[c.id]) && (!query || text.indexOf(query) !== -1);
     });
-    i = 0; render();
+    for (var k = deck.length - 1; k > 0; k--) {
+      var j = Math.floor(Math.random() * (k + 1)), t = deck[k]; deck[k] = deck[j]; deck[j] = t;
+    }
+    var limit = parseInt(sessionSize.value, 10);
+    if (limit > 0 && deck.length > limit) deck = deck.slice(0, limit);
+    i = 0; flipped = false; render();
   }
   function render() {
     if (!deck.length) {
@@ -75,11 +85,9 @@
       known = {}; saveKnown(); rebuild();
     }
   });
-  shuffleBtn.addEventListener("click", function () {
-    for (var k = deck.length - 1; k > 0; k--) { var j = Math.floor(Math.random() * (k + 1)); var t = deck[k]; deck[k] = deck[j]; deck[j] = t; }
-    i = 0; flipped = false; render();
-  });
+  shuffleBtn.addEventListener("click", rebuild); // deal a fresh randomized sample for the current filters
   chapter.addEventListener("change", rebuild);
+  sessionSize.addEventListener("change", rebuild);
   search.addEventListener("input", rebuild);
   hideKnown.querySelector("input").addEventListener("change", rebuild);
   document.addEventListener("keydown", function (e) {

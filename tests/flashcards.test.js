@@ -63,6 +63,7 @@ async function main() {
   const cards = [
     { id: "sql-1", chapter: "SQL", question: "What is a window function?", answer_html: "<p>It computes across related rows.</p>" },
     { id: "interview-1", chapter: "Interview Q&A", question: "How do you handle a missed deadline?", answer_html: "<p>Communicate early and agree a revised scope.</p>" },
+    ...Array.from({ length: 28 }, (_, i) => ({ id: "sql-extra-" + i, chapter: "SQL", question: "Practice item " + i, answer_html: "<p>Example response " + i + "</p>" })),
   ];
   const localStorage = {
     getItem: (key) => storage.get(key) || null,
@@ -77,10 +78,14 @@ async function main() {
 
   const [wrap] = document.app.children;
   const [controls, card, meta, nav] = wrap.children;
-  const [chapter, search, shuffle, hideKnown, reset] = controls.children;
+  const [chapter, sessionSize, search, shuffle, hideKnown, reset] = controls.children;
   const [prev, flip, know, next] = nav.children;
-  assert.match(meta.innerHTML, /Card 1 \/ 2/);
+  assert.match(meta.innerHTML, /Card 1 \/ 30/);
   assert.equal(chapter.value, "all");
+  assert.equal(sessionSize.value, "all");
+  sessionSize.value = "10";
+  sessionSize.dispatch("change");
+  assert.match(meta.innerHTML, /Card 1 \/ 10/);
 
   search.value = "missed deadline";
   search.dispatch("input");
@@ -103,25 +108,27 @@ async function main() {
   assert.equal(card.getAttribute("aria-pressed"), "false");
 
   know.click();
-  assert.match(meta.innerHTML, /1 \/ 2 marked known/);
+  assert.match(meta.innerHTML, /1 \/ 30 marked known/);
   chapter.value = "all";
   chapter.dispatch("change");
+  search.value = "computes across"; // search also matches answer text
+  search.dispatch("input");
   hideKnown.checkbox.checked = true;
   hideKnown.checkbox.dispatch("change");
   assert.match(meta.innerHTML, /Card 1 \/ 1/);
   assert.match(card.innerHTML, /What is a window function/);
 
   reset.click(); // confirmation is cancelled; progress remains
-  assert.match(meta.innerHTML, /1 \/ 2 marked known/);
+  assert.match(meta.innerHTML, /1 \/ 30 marked known/);
   confirmAnswer = true;
   reset.click();
   assert.equal(storage.get("jobprep-flashcards-v1"), "{}");
-  assert.match(meta.innerHTML, /Card 1 \/ 2/);
-  assert.match(meta.innerHTML, /0 \/ 2 marked known/);
+  assert.match(meta.innerHTML, /Card 1 \/ 1/);
+  assert.match(meta.innerHTML, /0 \/ 30 marked known/);
 
   // Keep references alive so lint-like checks catch accidentally disconnected controls.
   assert.ok(prev && next && flip && shuffle && reset);
-  console.log("flashcards: search, empty state, keyboard flip, hide-known, and reset passed");
+  console.log("flashcards: search, session size, empty state, keyboard flip, hide-known, and reset passed");
 }
 
 main().catch((error) => { console.error(error); process.exitCode = 1; });
