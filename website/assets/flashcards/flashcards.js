@@ -20,18 +20,25 @@
   var search = h("input"); search.type = "search"; search.placeholder = "Search questions or answers";
   search.setAttribute("aria-label", "Search flashcards");
   var hideKnown = h("label", null, '<input type="checkbox"> hide cards I know');
+  var typeFirst = h("label", null, '<input type="checkbox"> type answer first');
   var shuffleBtn = h("button", "md-button", "🔀 Shuffle");
   var resetBtn = h("button", "md-button", "Reset known");
   resetBtn.setAttribute("aria-label", "Reset all marked-known flashcards");
   controls.appendChild(chapter); controls.appendChild(sessionSize); controls.appendChild(search);
-  controls.appendChild(shuffleBtn); controls.appendChild(hideKnown); controls.appendChild(resetBtn);
+  controls.appendChild(shuffleBtn); controls.appendChild(hideKnown); controls.appendChild(typeFirst); controls.appendChild(resetBtn);
   var card = h("div", "fc-card"); card.setAttribute("tabindex", "0"); card.setAttribute("role", "button");
+  var answerArea = h("div", "fc-recall"); answerArea.hidden = true;
+  var answerInput = h("textarea", "fc-recall-input"); answerInput.rows = 3;
+  answerInput.placeholder = "Type a short answer before revealing the model answer…";
+  answerInput.setAttribute("aria-label", "Your answer before revealing the model answer");
+  var answerStatus = h("div", "fc-recall-status"); answerStatus.setAttribute("role", "status"); answerStatus.setAttribute("aria-live", "polite");
+  answerArea.appendChild(answerInput); answerArea.appendChild(answerStatus);
   var meta = h("div", "fc-meta"); meta.setAttribute("aria-live", "polite");
   var nav = h("div", "fc-controls");
   var prev = h("button", "md-button", "← Prev"), flip = h("button", "md-button md-button--primary", "Flip"),
       gotIt = h("button", "md-button", "✓ I know this"), nxt = h("button", "md-button", "Next →");
   [prev, flip, gotIt, nxt].forEach(function (b) { nav.appendChild(b); });
-  var wrap = h("div", "fc-wrap"); [controls, card, meta, nav].forEach(function (n) { wrap.appendChild(n); });
+  var wrap = h("div", "fc-wrap"); [controls, card, answerArea, meta, nav].forEach(function (n) { wrap.appendChild(n); });
   app.innerHTML = ""; app.appendChild(wrap);
 
   function rebuild() {
@@ -46,11 +53,11 @@
     }
     var limit = parseInt(sessionSize.value, 10);
     if (limit > 0 && deck.length > limit) deck = deck.slice(0, limit);
-    i = 0; flipped = false; render();
+    i = 0; flipped = false; answerInput.value = ""; answerStatus.textContent = ""; render();
   }
   function render() {
     if (!deck.length) {
-      card.setAttribute("aria-disabled", "true");
+      card.setAttribute("aria-disabled", "true"); answerArea.hidden = true;
       card.innerHTML = '<div class="fc-text">No matching cards. Clear the search, choose another chapter, or adjust “hide cards I know”.</div>';
       meta.textContent = "0 matching cards"; return;
     }
@@ -61,12 +68,25 @@
     card.className = "fc-card" + (flipped ? " fc-back" : "");
     card.innerHTML = '<div class="fc-side">' + (flipped ? "Answer" : "Question") + " · " + c.chapter + '</div><div class="fc-text">' +
       (flipped ? c.answer_html : c.question) + "</div>";
+    answerArea.hidden = !(typeFirst.querySelector("input").checked && !flipped);
+    flip.textContent = flipped ? "Show question" : (typeFirst.querySelector("input").checked ? "Reveal answer" : "Flip");
     var nKnown = all.filter(function (x) { return known[x.id]; }).length;
     meta.innerHTML = "<span>Card " + (i + 1) + " / " + deck.length + "</span><span>" + nKnown + " / " + all.length + " marked known" +
       (known[c.id] ? " · ✓ this one" : "") + "</span>";
   }
-  function go(d) { if (!deck.length) return; i = (i + d + deck.length) % deck.length; flipped = false; render(); }
-  function doFlip() { if (!deck.length) return; flipped = !flipped; render(); }
+  function go(d) {
+    if (!deck.length) return;
+    i = (i + d + deck.length) % deck.length; flipped = false;
+    answerInput.value = ""; answerStatus.textContent = ""; render();
+  }
+  function doFlip() {
+    if (!deck.length) return;
+    if (!flipped && typeFirst.querySelector("input").checked && !answerInput.value.trim()) {
+      answerStatus.textContent = "Try typing a short answer first, then reveal the model answer.";
+      return;
+    }
+    answerStatus.textContent = ""; flipped = !flipped; render();
+  }
 
   card.addEventListener("click", doFlip);
   card.addEventListener("keydown", function (e) {
@@ -90,6 +110,10 @@
   sessionSize.addEventListener("change", rebuild);
   search.addEventListener("input", rebuild);
   hideKnown.querySelector("input").addEventListener("change", rebuild);
+  typeFirst.querySelector("input").addEventListener("change", function () {
+    answerInput.value = ""; answerStatus.textContent = ""; render();
+  });
+  answerInput.addEventListener("input", function () { answerStatus.textContent = ""; });
   document.addEventListener("keydown", function (e) {
     if (e.target.tagName === "INPUT" || e.target.tagName === "SELECT" || e.target.tagName === "TEXTAREA") return;
     if (e.key === "ArrowRight") go(1); else if (e.key === "ArrowLeft") go(-1);

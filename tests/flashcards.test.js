@@ -77,8 +77,9 @@ async function main() {
   await new Promise((resolve) => setImmediate(resolve));
 
   const [wrap] = document.app.children;
-  const [controls, card, meta, nav] = wrap.children;
-  const [chapter, sessionSize, search, shuffle, hideKnown, reset] = controls.children;
+  const [controls, card, answerArea, meta, nav] = wrap.children;
+  const [chapter, sessionSize, search, shuffle, hideKnown, typeFirst, reset] = controls.children;
+  const [answerInput, answerStatus] = answerArea.children;
   const [prev, flip, know, next] = nav.children;
   assert.match(meta.innerHTML, /Card 1 \/ 30/);
   assert.equal(chapter.value, "all");
@@ -126,9 +127,23 @@ async function main() {
   assert.match(meta.innerHTML, /Card 1 \/ 1/);
   assert.match(meta.innerHTML, /0 \/ 30 marked known/);
 
+  typeFirst.checkbox.checked = true;
+  typeFirst.checkbox.dispatch("change");
+  assert.equal(answerArea.hidden, false);
+  assert.equal(flip.textContent, "Reveal answer");
+  flip.click();
+  assert.equal(card.getAttribute("aria-pressed"), "false");
+  assert.match(answerStatus.textContent, /Try typing a short answer first/);
+  answerInput.value = "Explain the idea in my own words";
+  answerInput.dispatch("input");
+  flip.click();
+  assert.equal(card.getAttribute("aria-pressed"), "true");
+  assert.equal(answerArea.hidden, true);
+  assert.match(card.innerHTML, /It computes across related rows/);
+
   // Keep references alive so lint-like checks catch accidentally disconnected controls.
-  assert.ok(prev && next && flip && shuffle && reset);
-  console.log("flashcards: search, session size, empty state, keyboard flip, hide-known, and reset passed");
+  assert.ok(prev && next && flip && shuffle && reset && sessionSize);
+  console.log("flashcards: search, sessions, active recall, empty state, keyboard flip, hide-known, and reset passed");
 }
 
 main().catch((error) => { console.error(error); process.exitCode = 1; });

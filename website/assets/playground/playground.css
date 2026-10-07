@@ -48,6 +48,11 @@
 .fc-card .fc-side { font-size: .65rem; text-transform: uppercase; letter-spacing: .08em; color: var(--md-default-fg-color--light); }
 .fc-card .fc-text { font-size: .95rem; margin-top: .6rem; }
 .fc-card.fc-back { border-color: var(--md-accent-fg-color); }
+.fc-recall { margin: .65rem 0; }
+.fc-recall-input { box-sizing: border-box; width: 100%; min-height: 5rem; padding: .55rem .7rem; border-radius: .25rem;
+  border: 1px solid var(--md-default-fg-color--lighter); background: var(--md-default-bg-color); color: var(--md-default-fg-color);
+  font: inherit; resize: vertical; }
+.fc-recall-status { min-height: 1.2em; margin-top: .3rem; color: var(--md-default-fg-color--light); font-size: .75rem; }
 .fc-meta { display: flex; justify-content: space-between; margin-top: .6rem; font-size: .7rem; color: var(--md-default-fg-color--light); }
 .fc-controls .md-button { padding: .3em .9em; font-size: .7rem; cursor: pointer; }
 
