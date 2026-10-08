@@ -72,9 +72,11 @@ site = load_module("build_site", ROOT / "website" / "build_site.py")
 
 def test_flashcards_csv_in_sync(tmp_path):
     cards = site.extract_flashcards()
-    assert len(cards) == 100  # 60 study-guide cards + 40 interview-mock answers
+    assert len(cards) == 112  # 60 original study-guide cards + 40 interview answers + 12 roadmap self-checks
     interview = [c for c in cards if c["chapter"] == "Interview Q&A"]
+    roadmap = [c for c in cards if c["chapter"].startswith("Data Analyst Roadmap")]
     assert len(interview) == 40
+    assert len(roadmap) == 12
     assert [c["id"] for c in interview] == [f"07-interview-qa-{i}" for i in range(1, 41)]
     assert all("<p>" in c["answer_html"] for c in interview), "interview answers should render as HTML, not raw Markdown"
     site.write_flashcards(cards, tmp_path / "f.csv")
