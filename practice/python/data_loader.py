@@ -6,11 +6,24 @@
 """
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 import pandas as pd
 
-DATA = Path(__file__).resolve().parents[2] / "data"
+HERE = Path(__file__).resolve().parent
+DATA = HERE.parents[1] / "data"
+
+
+def load_api_pages() -> list[dict]:
+    """Cached snapshot of a paginated events-API response (fixture for p26–p28).
+
+    Returns the list of page payloads, each shaped like
+    {"page": int, "next_page": int | None, "records": [ ... ]}.
+    Deterministic local file — no network calls are made.
+    """
+    with open(HERE / "api_fixture.json", encoding="utf-8") as f:
+        return json.load(f)["pages"]
 
 
 def load_clean() -> dict[str, pd.DataFrame]:

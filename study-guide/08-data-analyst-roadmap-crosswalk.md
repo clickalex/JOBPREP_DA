@@ -10,9 +10,9 @@ This chapter checks the repository against the [roadmap.sh Data Analyst roadmap]
 | SQL, databases and CSV files | **Covered** | The [SQL practice](../practice/sql/README.md) uses SQLite; the portfolio includes repeatable CSV cleaning and a star-schema dashboard. See the storage and ingestion notes below for warehouses, Parquet and APIs. |
 | Excel / spreadsheet analysis | **Mostly covered** | The [Excel guide](02-excel.md) includes the roadmap's common functions, pivots, charts and cleanup. This update adds explicit HLOOKUP and basic aggregate-function coverage. Google Sheets equivalents are outlined below. |
 | Descriptive statistics and visualisation | **Mostly covered** | The [statistics](03-statistics.md), [Excel](02-excel.md), and [Python charting](04-python-pandas.md) guides cover central tendency, spread, distributions, hypothesis tests and common charts. This update adds range/kurtosis cautions and a chart-selection checklist. |
-| Python and data-manipulation / visualisation libraries | **Covered** | The [Python guide](04-python-pandas.md) and 25 graded exercises practise pandas, NumPy, Matplotlib and Seaborn. |
+| Python and data-manipulation / visualisation libraries | **Covered** | The [Python guide](04-python-pandas.md) and 28 graded exercises practise pandas, NumPy, Matplotlib and Seaborn. |
 | R, dplyr and ggplot2 | **Missing** | A small optional R translation is included below. The repository's autograded path remains Python/pandas; you do not need both languages for most junior roles. |
-| APIs and web scraping | **Missing** | Safe ingestion patterns, pagination, validation and responsible scraping are outlined below. No live API call is required to complete this repo's exercises. |
+| APIs and web scraping | **Missing → now practised** | Safe ingestion patterns, pagination, validation and responsible scraping are outlined below, and [Python exercises p26–p28](../practice/python/README.md) grade the ingestion skills against a cached API fixture. No live API call is required. |
 | Regression, supervised/unsupervised learning, common ML algorithms and evaluation | **Partial** | The [statistics guide](03-statistics.md) introduces linear and logistic regression. This chapter adds a model/algorithm map, evaluation and leakage basics, plus optional forecasting and customer-segmentation project briefs. |
 | Hadoop, Spark, MapReduce, parallel processing / MPI | **Missing / specialist** | A vocabulary and “when to reach for it” overview is included below. A junior analyst should usually learn SQL and warehouse basics first; distributed-computing implementation is role-dependent. |
 | Neural networks, CNNs, RNNs, TensorFlow, PyTorch, image recognition and NLP | **Missing / specialist** | Covered at orientation level below, clearly marked optional. These are usually data-science/ML specialisations, not prerequisites for a general DA role. |
@@ -59,6 +59,8 @@ rows = payload["data"]  # validate keys, types, count and pagination before anal
 ```
 
 This is a request example, not a working credential or guaranteed public endpoint. Production code also needs the API's pagination scheme, rate-limit handling, error logging and a secure secret configuration; never commit `.env` files or real tokens.
+
+**Practise it:** [Python exercises p26–p28](../practice/python/README.md) use a cached snapshot of a paginated events API (`practice/python/api_fixture.json`, no network calls) and grade you on flattening pages, removing duplicate records across pages, coercing types, and writing an ingestion validation report.
 
 ### Web scraping: last resort, not a bypass
 

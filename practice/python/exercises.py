@@ -1,5 +1,5 @@
 """
-Python / pandas practice — 25 exercises on the ShopKart data.
+Python / pandas practice — 28 exercises on the ShopKart data.
 
 HOW TO USE
   1. Replace each `raise NotImplementedError` with your solution.
@@ -13,6 +13,8 @@ INPUTS — the checker passes fresh copies of these DataFrames by parameter name
   customers, products, orders, items,    clean tables from data/clean, with dates parsed to datetime64
   sessions, experiment, employees        (see data/README.md for the data dictionary)
   city, dates                            customers_raw["city"] / customers_raw["signup_date"] (p02, p03)
+  api_pages                              cached pages of an events-API snapshot: list of
+                                         {"page", "next_page", "records"} dicts (p26-p28)
 
 CONVENTIONS (same as the SQL set)
   net line revenue = quantity * unit_price - discount
@@ -220,4 +222,38 @@ def p25_channel_ltv(orders, items, customers) -> pd.DataFrame:
       revenue_per_customer  mean valid net revenue per customer, non-buyers count as 0 (2 dp)
     Return [acquisition_channel, customers, buyer_pct, revenue_per_customer]
     sorted by revenue_per_customer descending."""
+    raise NotImplementedError
+
+
+# =========================================================================== #
+# E. API INGESTION  (cached JSON fixture — no live network calls)
+# =========================================================================== #
+def p26_flatten_pages(api_pages: list) -> pd.DataFrame:
+    """api_pages is a list of page payloads from a cached events-API snapshot:
+    {"page": int, "next_page": int | None, "records": [...]}.
+    Concatenate the records of every page into ONE DataFrame, in page order
+    (page 1 records first, then page 2, then page 3). Keep every row — duplicates,
+    missing amounts and all. Return columns in the order they appear in the records
+    (event_id, customer_id, event_type, event_ts, amount)."""
+    raise NotImplementedError
+
+
+def p27_dedupe_and_tidy(api_pages: list) -> pd.DataFrame:
+    """Build an analysis-ready table from the same pages:
+      1. flatten all pages (page order)
+      2. drop duplicate event_ids, keeping the FIRST occurrence
+      3. amount -> numeric (values that don't parse stay NaN; do not drop rows)
+      4. event_ts -> datetime64
+      5. sort by event_id and reset the index
+    Return all 13 unique events."""
+    raise NotImplementedError
+
+
+def p28_validation_report(api_pages: list) -> dict:
+    """Before analysing, report what the ingestion found. Return a dict with:
+      total_records    all rows across every page
+      duplicate_ids    rows removed when de-duplicating by event_id (keep first)
+      invalid_amounts  unique events whose amount is missing, doesn't parse to a
+                       number, or is negative
+      valid_records    unique events left with a valid (non-negative numeric) amount"""
     raise NotImplementedError

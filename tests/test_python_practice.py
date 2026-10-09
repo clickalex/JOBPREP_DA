@@ -11,12 +11,12 @@ check = load_module("py_check", PY / "check.py")
 
 def test_reference_solutions_pass(capsys):
     assert check.main(["--solutions"]) == 0
-    assert "25 passed" in capsys.readouterr().out
+    assert "28 passed" in capsys.readouterr().out
 
 
 def test_exercise_stubs_are_unsolved(capsys):
     assert check.main([]) == 0
-    assert "25 not attempted" in capsys.readouterr().out
+    assert "28 not attempted" in capsys.readouterr().out
 
 
 def test_wrong_answers_are_caught(capsys, monkeypatch):
@@ -37,4 +37,4 @@ def test_wrong_answers_are_caught(capsys, monkeypatch):
     monkeypatch.setitem(sys.modules, "exercises", fake)
     assert check.main([]) == 1
     out = capsys.readouterr().out
-    assert "24 passed" in out and "1 failed" in out
+    assert "27 passed" in out and "1 failed" in out

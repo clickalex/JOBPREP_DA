@@ -20,7 +20,7 @@ import pandas as pd
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
-from data_loader import load_clean, load_raw  # noqa: E402
+from data_loader import load_api_pages, load_clean, load_raw  # noqa: E402
 
 # Windows consoles/pipes default to cp1252, which can't print ✓ ✗ ₹ — force UTF-8.
 for _stream in (sys.stdout, sys.stderr):
@@ -94,6 +94,7 @@ def main(argv):
     data = {**load_clean(), **load_raw()}
     data["city"] = data["customers_raw"]["city"]           # Series inputs for p02 / p03
     data["dates"] = data["customers_raw"]["signup_date"]
+    data["api_pages"] = load_api_pages()                   # cached API fixture for p26-p28
     funcs = sorted(name for name, f in inspect.getmembers(ref, inspect.isfunction)
                    if name[:1] == "p" and name[1:3].isdigit())
     res = {"pass": 0, "fail": 0, "todo": 0}

@@ -18,7 +18,7 @@ dashboard kit. Everything runs on one realistic dataset, so skills build on each
 |---|---|---|
 | 📚 **Study guide** | 8 chapters: core DA skills, interview Q&A, plus a roadmap crosswalk covering APIs, R, machine learning and optional big-data topics | [`study-guide/`](study-guide/) |
 | 🗄️ **SQL practice** | 60 questions, Easy → Hard, auto-graded, locally or [in the browser](https://clickalex.github.io/JOBPREP_DA/playground/) | [`practice/sql/`](practice/sql/) |
-| 🐍 **Python practice** | 25 pandas/stats exercises, auto-graded | [`practice/python/`](practice/python/) |
+| 🐍 **Python practice** | 28 pandas/stats/API-ingestion exercises, auto-graded | [`practice/python/`](practice/python/) |
 | 📊 **Excel practice** | 20-task workbook that grades itself | [`practice/excel/`](practice/excel/) |
 | 🎤 **Mock interviews** | Three live SQL rounds (core, product & marketing, advanced; all also available as [timed, auto-graded mocks](https://clickalex.github.io/JOBPREP_DA/playground/#m1)), case round, take-home and stats rapid-fire (scripts + rubrics), plus [40 general, technical and judgement interview Q&As](mock-interviews/07-interview-qa.md) | [`mock-interviews/`](mock-interviews/) |
 | 🃏 **Flashcards** | 112 Q&As: 60 core study-guide cards + 40 interview answers + 12 roadmap self-checks (web + Anki import) | [`study-guide/flashcards.csv`](study-guide/flashcards.csv) |
@@ -68,7 +68,7 @@ dashboard CSVs in Power BI / Tableau.
 | 1 | SQL §1–4 | SQL Q1–12 | All Easy questions pass |
 | 2 | SQL §5–6 (window functions) | SQL Q13–28 (+ Q41–50 for extra reps) | Medium questions pass, ~10 min each |
 | 3 | Excel guide | Excel workbook tasks 1–20 + bonus dashboard | Score 20/20 without the answer key |
-| 4 | Python/pandas guide | Python p01–p18 | Cleaning + analysis sections pass |
+| 4 | Python/pandas guide | Python p01–p18 (+ optional p26–p28 API ingestion) | Cleaning + analysis sections pass |
 | 5 | Statistics guide | Python p19–p25, SQL Q29–40 and Q51–60 | You can explain the A/B readout out loud |
 | 6 | BI guide | Build the ShopKart dashboard (3 pages) | Your KPIs match the target numbers; published or screenshotted |
 | 7 | Metrics & cases guide | Re-do the portfolio analysis **your own way** + add one new question | README in your own words, on your GitHub |
@@ -142,7 +142,7 @@ python website/build_site.py && mkdocs serve -f website/mkdocs.yml     # http://
 Once the workflows are activated ([`ci/README.md`](ci/README.md)), every push and pull request runs the test suite on **Linux, Windows and macOS** (Python 3.10–3.13):
 
 * the dataset matches its checksums and regenerates byte-for-byte;
-* all 60 SQL and 25 pandas reference solutions pass their graders, and the graders reject wrong answers
+* all 60 SQL and 28 pandas reference solutions pass their graders, and the graders reject wrong answers
   (wrong values, wrong row order, wrong column count);
 * the browser playground's grader passes all 60 practice and 19 mock-interview solutions inside **sql.js** (Node, headless);
 * the flashcards' search, session limits, active recall, empty state, keyboard flip, hide-known and confirmed-reset controls pass a Node smoke test;
