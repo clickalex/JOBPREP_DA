@@ -258,3 +258,31 @@ def p25_channel_ltv(orders, items, customers):
     out["buyer_pct"] = (out["buyer_pct"] * 100).round(1)
     out["revenue_per_customer"] = out["revenue_per_customer"].round(2)
     return out.sort_values("revenue_per_customer", ascending=False).reset_index()
+
+
+# ==================================================== E. API ingestion
+def _flatten(api_pages):
+    rows = [r for page in api_pages for r in page["records"]]
+    return pd.DataFrame(rows, columns=["event_id", "customer_id", "event_type", "event_ts", "amount"])
+
+
+def p26_flatten_pages(api_pages):
+    return _flatten(api_pages)
+
+
+def p27_dedupe_and_tidy(api_pages):
+    df = _flatten(api_pages).drop_duplicates(subset="event_id", keep="first").copy()
+    df["amount"] = pd.to_numeric(df["amount"], errors="coerce")
+    df["event_ts"] = pd.to_datetime(df["event_ts"])
+    return df.sort_values("event_id").reset_index(drop=True)
+
+
+def p28_validation_report(api_pages):
+    df = _flatten(api_pages)
+    total = len(df)
+    dupes = int(df.duplicated(subset="event_id", keep="first").sum())
+    uniq = df.drop_duplicates(subset="event_id", keep="first").copy()
+    amount = pd.to_numeric(uniq["amount"], errors="coerce")
+    invalid = int(((amount.isna()) | (amount < 0)).sum())
+    return {"total_records": total, "duplicate_ids": dupes,
+            "invalid_amounts": invalid, "valid_records": len(uniq) - invalid}

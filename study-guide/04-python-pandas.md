@@ -4,7 +4,7 @@ Python rounds for DA roles are usually **pandas-focused**: load a CSV, clean it,
 chart, often in a Jupyter or Colab notebook shared on screen, or as a take-home. LeetCode-style algorithms are rare for
 analyst roles. Basic Python (lists, dicts, loops, functions) is still expected.
 
-**Practice:** [25 graded exercises](../practice/python/exercises.py) · `python practice/python/check.py`
+**Practice:** [28 graded exercises](../practice/python/exercises.py) · `python practice/python/check.py`
 
 ---
 

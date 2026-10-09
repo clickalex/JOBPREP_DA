@@ -1,0 +1,39 @@
+{
+  "api": "https://api.shopkart.example/v1/events",
+  "note": "Cached snapshot of a paginated events API response. Deterministic fixture for exercises p26-p28: no live network calls.",
+  "pages": [
+    {
+      "page": 1,
+      "next_page": 2,
+      "records": [
+        {"event_id": "E001", "customer_id": 101, "event_type": "order", "event_ts": "2026-09-01T10:15:00", "amount": 1499.0},
+        {"event_id": "E002", "customer_id": 102, "event_type": "order", "event_ts": "2026-09-01T11:05:00", "amount": 749.5},
+        {"event_id": "E003", "customer_id": 103, "event_type": "refund", "event_ts": "2026-09-01T12:40:00", "amount": 250.0},
+        {"event_id": "E004", "customer_id": 101, "event_type": "order", "event_ts": "2026-09-02T09:20:00", "amount": 3299.0},
+        {"event_id": "E005", "customer_id": 104, "event_type": "order", "event_ts": "2026-09-02T13:10:00", "amount": 599.0},
+        {"event_id": "E006", "customer_id": 105, "event_type": "order", "event_ts": "2026-09-02T18:45:00", "amount": 1199.0}
+      ]
+    },
+    {
+      "page": 2,
+      "next_page": 3,
+      "records": [
+        {"event_id": "E005", "customer_id": 104, "event_type": "order", "event_ts": "2026-09-02T13:10:00", "amount": 599.0},
+        {"event_id": "E006", "customer_id": 105, "event_type": "order", "event_ts": "2026-09-02T18:45:00", "amount": 1199.0},
+        {"event_id": "E007", "customer_id": 106, "event_type": "order", "event_ts": "2026-09-03T08:30:00", "amount": 2099.0},
+        {"event_id": "E008", "customer_id": 107, "event_type": "refund", "event_ts": "2026-09-03T10:05:00", "amount": 450.0},
+        {"event_id": "E009", "customer_id": 108, "event_type": "order", "event_ts": "2026-09-03T15:55:00", "amount": 899.0}
+      ]
+    },
+    {
+      "page": 3,
+      "next_page": null,
+      "records": [
+        {"event_id": "E010", "customer_id": 109, "event_type": "order", "event_ts": "2026-09-04T09:00:00", "amount": 1799.0},
+        {"event_id": "E011", "customer_id": 110, "event_type": "order", "event_ts": "2026-09-04T11:25:00", "amount": "N/A"},
+        {"event_id": "E012", "customer_id": 111, "event_type": "order", "event_ts": "2026-09-04T14:10:00"},
+        {"event_id": "E013", "customer_id": 112, "event_type": "refund", "event_ts": "2026-09-04T17:35:00", "amount": -50.0}
+      ]
+    }
+  ]
+}

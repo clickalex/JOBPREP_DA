@@ -11,7 +11,7 @@ staging folder, and links are rewritten so they work on the website:
   * links to notebooks     -> the rendered HTML copy
   * links to files that aren't published (code, CSVs, …) -> the file on GitHub
 It also generates the SQL playground data (questions + expected results) and the
-flashcards (from the <details> Q&As in the study guide).
+flashcards (from the <details> Q&As in the study guide and interview mock).
 """
 from __future__ import annotations
 
@@ -185,12 +185,20 @@ def strip_tags(s: str) -> str:
 
 
 def extract_flashcards() -> list[dict]:
+    """Extract study-guide and mock-interview Q&As into cards, keeping markdown as the source of truth."""
+    from markdown import markdown as render_markdown
+
     cards = []
-    for md in sorted((ROOT / "study-guide").glob("*.md")):
+    sources = [(md, None) for md in sorted((ROOT / "study-guide").glob("*.md"))]
+    sources.append((ROOT / "mock-interviews" / "07-interview-qa.md", "Interview Q&A"))
+    for md, card_group in sources:
         text = md.read_text(encoding="utf-8")
         title = re.search(r"^# (.+)$", text, re.M).group(1)
-        chapter = re.sub(r"^\d+\s*·\s*", "", title).split(" for ")[0].strip()
+        chapter = card_group or re.sub(r"^\d+\s*·\s*", "", title).split(" for ")[0].strip()
         for n, (q, a) in enumerate(QA_RE.findall(text), start=1):
+            if card_group:
+                # The interview answers use Markdown; render it for the web deck/Anki HTML fields.
+                a = render_markdown(a.strip())
             a = re.sub(r'<a href="[^"]*">(.*?)</a>', r"\1", a.strip())   # links don't work on a card
             cards.append({"id": f"{md.stem}-{n}", "chapter": chapter, "question": strip_tags(q), "answer_html": a})
     return cards
