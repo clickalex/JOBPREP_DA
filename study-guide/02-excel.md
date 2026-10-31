@@ -11,11 +11,15 @@ Answers grade themselves inside Excel.
 
 ## 1. Functions you must know cold
 
+**Core arithmetic and logic:** `SUM`, `AVERAGE`, `COUNT` (numbers only), `COUNTA` (non-empty), `MIN`, `MAX`, and `IF`.
+For text cleaning, `REPLACE(text, start, count, new_text)` changes characters by position; `SUBSTITUTE(text, old, new)` replaces matching text. Both exist alongside `TRIM`, `CLEAN`, `PROPER`, `UPPER` and `LOWER` below.
+
 ### Lookups
 | Function | Syntax | Notes |
 |---|---|---|
 | **XLOOKUP** (365/2021) | `=XLOOKUP(lookup, lookup_array, return_array, [if_not_found], [match_mode], [search_mode])` | Exact match by default, can look left, returns whole rows/columns. **Use this if available** |
 | VLOOKUP | `=VLOOKUP(lookup, table, col_index, FALSE)` | Always pass `FALSE` (exact). Can't look left, and breaks if columns are inserted |
+| HLOOKUP | `=HLOOKUP(lookup, table, row_index, FALSE)` | Horizontal lookup; same exact-match caution as VLOOKUP. Prefer XLOOKUP or INDEX/MATCH for new work |
 | INDEX/MATCH | `=INDEX(return_col, MATCH(lookup, lookup_col, 0))` | Works in every version and can look left: the classic interview answer |
 | 2-way lookup | `=INDEX(grid, MATCH(row_key, row_hdrs, 0), MATCH(col_key, col_hdrs, 0))` | Or nested XLOOKUP |
 | Multiple criteria | `=XLOOKUP(1, (A:A=x)*(B:B=y), C:C)` | Or a helper "key" column `=A2&"|"&B2` |

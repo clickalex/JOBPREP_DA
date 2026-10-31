@@ -72,7 +72,13 @@ site = load_module("build_site", ROOT / "website" / "build_site.py")
 
 def test_flashcards_csv_in_sync(tmp_path):
     cards = site.extract_flashcards()
-    assert len(cards) >= 30
+    assert len(cards) == 112  # 60 original study-guide cards + 40 interview answers + 12 roadmap self-checks
+    interview = [c for c in cards if c["chapter"] == "Interview Q&A"]
+    roadmap = [c for c in cards if c["chapter"].startswith("Data Analyst Roadmap")]
+    assert len(interview) == 40
+    assert len(roadmap) == 12
+    assert [c["id"] for c in interview] == [f"07-interview-qa-{i}" for i in range(1, 41)]
+    assert all("<p>" in c["answer_html"] for c in interview), "interview answers should render as HTML, not raw Markdown"
     site.write_flashcards(cards, tmp_path / "f.csv")
     committed = (ROOT / "study-guide" / "flashcards.csv").read_text(encoding="utf-8")
     assert (tmp_path / "f.csv").read_text(encoding="utf-8") == committed, "run: python website/build_site.py"
@@ -116,6 +122,13 @@ def test_staged_links_point_somewhere_valid(staged):
 def test_browser_playground_grader_with_sqljs(staged):
     r = subprocess.run(["node", str(ROOT / "tests" / "playground.test.js")], capture_output=True, text=True, encoding="utf-8")
     assert r.returncode == 0, r.stdout + r.stderr
+
+
+@pytest.mark.skipif(shutil.which("node") is None, reason="node not installed")
+def test_flashcard_controls_with_node():
+    r = subprocess.run(["node", "tests/flashcards.test.js"], cwd=ROOT, capture_output=True, text=True, encoding="utf-8")
+    assert r.returncode == 0, r.stdout + r.stderr
+    assert "hide-known, and reset passed" in r.stdout
 
 
 def test_mkdocs_strict_build(staged, tmp_path):

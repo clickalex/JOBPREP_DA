@@ -258,3 +258,66 @@ def p25_channel_ltv(orders, items, customers):
     out["buyer_pct"] = (out["buyer_pct"] * 100).round(1)
     out["revenue_per_customer"] = out["revenue_per_customer"].round(2)
     return out.sort_values("revenue_per_customer", ascending=False).reset_index()
+
+
+# ==================================================== E. API ingestion
+def _flatten(api_pages):
+    rows = [r for page in api_pages for r in page["records"]]
+    return pd.DataFrame(rows, columns=["event_id", "customer_id", "event_type", "event_ts", "amount"])
+
+
+def p26_flatten_pages(api_pages):
+    return _flatten(api_pages)
+
+
+def p27_dedupe_and_tidy(api_pages):
+    df = _flatten(api_pages).drop_duplicates(subset="event_id", keep="first").copy()
+    df["amount"] = pd.to_numeric(df["amount"], errors="coerce")
+    df["event_ts"] = pd.to_datetime(df["event_ts"])
+    return df.sort_values("event_id").reset_index(drop=True)
+
+
+def p28_validation_report(api_pages):
+    df = _flatten(api_pages)
+    total = len(df)
+    dupes = int(df.duplicated(subset="event_id", keep="first").sum())
+    uniq = df.drop_duplicates(subset="event_id", keep="first").copy()
+    amount = pd.to_numeric(uniq["amount"], errors="coerce")
+    invalid = int(((amount.isna()) | (amount < 0)).sum())
+    return {"total_records": total, "duplicate_ids": dupes,
+            "invalid_amounts": invalid, "valid_records": len(uniq) - invalid}
+
+
+# ============================================== F. Forecasting & validation
+def _monthly_net(orders, items):
+    lines = _valid_lines(orders, items)
+    s = lines.groupby(lines["order_ts"].dt.to_period("M"))["net_revenue"].sum()
+    s.index = s.index.to_timestamp("M")
+    return s.sort_index()
+
+
+def p29_monthly_net_revenue(orders, items):
+    s = _monthly_net(orders, items)
+    return pd.DataFrame({"month": s.index, "net_revenue": s.values.round(2)}).reset_index(drop=True)
+
+
+def p30_seasonal_naive_mae(orders, items):
+    s = _monthly_net(orders, items)
+    train, test = s.iloc[:-3], s.iloc[-3:]
+    pred = s.shift(12).reindex(test.index)
+    return round(float((pred - test).abs().mean()), 2)
+
+
+def p31_forecast_baselines(orders, items):
+    s = _monthly_net(orders, items)
+    train, test = s.iloc[:-3], s.iloc[-3:]
+    seasonal = s.shift(12).reindex(test.index)
+    trailing = pd.Series(train.iloc[-3:].mean(), index=test.index)
+    ratios = [v / s[ts - pd.DateOffset(years=1)] for ts, v in train.items()
+              if (ts - pd.DateOffset(years=1)) in s.index]
+    drift = seasonal * float(np.mean(ratios))
+    maes = {"mae_seasonal_naive": round(float((seasonal - test).abs().mean()), 2),
+            "mae_trailing_mean": round(float((trailing - test).abs().mean()), 2),
+            "mae_drift_adjusted": round(float((drift - test).abs().mean()), 2)}
+    best = min(maes, key=maes.get).removeprefix("mae_")
+    return {**maes, "best": best}

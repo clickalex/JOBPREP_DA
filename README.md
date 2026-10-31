@@ -16,12 +16,12 @@ dashboard kit. Everything runs on one realistic dataset, so skills build on each
 
 | | What's inside | Start here |
 |---|---|---|
-| 📚 **Study guide** | 7 chapters: concepts, cheat sheets, pitfalls, interview Q&A | [`study-guide/`](study-guide/) |
+| 📚 **Study guide** | 8 chapters: core DA skills, interview Q&A, plus a roadmap crosswalk covering APIs, R, machine learning and optional big-data topics | [`study-guide/`](study-guide/) |
 | 🗄️ **SQL practice** | 60 questions, Easy → Hard, auto-graded, locally or [in the browser](https://clickalex.github.io/JOBPREP_DA/playground/) | [`practice/sql/`](practice/sql/) |
-| 🐍 **Python practice** | 25 pandas/stats exercises, auto-graded | [`practice/python/`](practice/python/) |
+| 🐍 **Python practice** | 31 pandas/stats/API-ingestion/forecasting exercises, auto-graded | [`practice/python/`](practice/python/) |
 | 📊 **Excel practice** | 20-task workbook that grades itself | [`practice/excel/`](practice/excel/) |
-| 🎤 **Mock interviews** | Three live SQL rounds (core, product & marketing, advanced; all also available as [timed, auto-graded mocks](https://clickalex.github.io/JOBPREP_DA/playground/#m1)), case round, take-home, stats rapid-fire, all with scripts and rubrics | [`mock-interviews/`](mock-interviews/) |
-| 🃏 **Flashcards** | 54 interview Q&As from the study guide (web + Anki import) | [`study-guide/flashcards.csv`](study-guide/flashcards.csv) |
+| 🎤 **Mock interviews** | Three live SQL rounds (core, product & marketing, advanced; all also available as [timed, auto-graded mocks](https://clickalex.github.io/JOBPREP_DA/playground/#m1)), case round, take-home and stats rapid-fire (scripts + rubrics), plus [40 general, technical and judgement interview Q&As](mock-interviews/07-interview-qa.md) | [`mock-interviews/`](mock-interviews/) |
+| 🃏 **Flashcards** | 112 Q&As: 60 core study-guide cards + 40 interview answers + 12 roadmap self-checks (web + Anki import) | [`study-guide/flashcards.csv`](study-guide/flashcards.csv) |
 | 💼 **Portfolio project** | Cleaning → analysis → A/B test → recommendations → dashboard | [`portfolio/shopkart-growth-analysis/`](portfolio/shopkart-growth-analysis/) |
 | 🧾 **Dataset** | ShopKart, a fictional Indian e-commerce company (8k customers, 12k orders, clickstream, A/B test) | [`data/`](data/) |
 
@@ -59,6 +59,7 @@ dashboard CSVs in Power BI / Tableau.
 | 05 | [Power BI & Tableau](study-guide/05-bi-powerbi-tableau.md) | star schema, **DAX & CALCULATE**, time intelligence, LODs, order of operations, design principles |
 | 06 | [Business metrics & cases](study-guide/06-business-metrics-and-case-studies.md) | e-commerce/SaaS metrics, metric trees, "metric dropped" framework, guesstimates |
 | 07 | [Behavioral & job search](study-guide/07-behavioral-and-job-search.md) | hiring process, STAR stories, resume/ATS, portfolio, India job-search notes |
+| 08 | [Roadmap crosswalk & extensions](study-guide/08-data-analyst-roadmap-crosswalk.md) | coverage check against roadmap.sh; APIs, R, ML evaluation, big-data orientation and optional project ideas |
 
 ## An 8-week plan (≈ 10–12 hours/week)
 
@@ -67,8 +68,8 @@ dashboard CSVs in Power BI / Tableau.
 | 1 | SQL §1–4 | SQL Q1–12 | All Easy questions pass |
 | 2 | SQL §5–6 (window functions) | SQL Q13–28 (+ Q41–50 for extra reps) | Medium questions pass, ~10 min each |
 | 3 | Excel guide | Excel workbook tasks 1–20 + bonus dashboard | Score 20/20 without the answer key |
-| 4 | Python/pandas guide | Python p01–p18 | Cleaning + analysis sections pass |
-| 5 | Statistics guide | Python p19–p25, SQL Q29–40 and Q51–60 | You can explain the A/B readout out loud |
+| 4 | Python/pandas guide | Python p01–p18 (+ optional p26–p28 API ingestion) | Cleaning + analysis sections pass |
+| 5 | Statistics guide | Python p19–p25 (+ optional p29–p31 forecasting), SQL Q29–40 and Q51–60 | You can explain the A/B readout out loud |
 | 6 | BI guide | Build the ShopKart dashboard (3 pages) | Your KPIs match the target numbers; published or screenshotted |
 | 7 | Metrics & cases guide | Re-do the portfolio analysis **your own way** + add one new question | README in your own words, on your GitHub |
 | 8 | Behavioral guide | 6 STAR stories, resume, LinkedIn, the [mock interviews](mock-interviews/) (3 live SQL rounds + case, take-home, stats) | Applying daily; referrals requested |
@@ -79,7 +80,7 @@ Already comfortable with a topic? Run the checker on the Hard questions first, a
 
 | Pattern | Where you'll find it |
 |---|---|
-| Growth +89% YoY and a Diwali spike | SQL Q25/Q31/Q38 · Python p08/p16 · Portfolio §2 |
+| Growth +89% YoY and a Diwali spike | SQL Q25/Q31/Q38 · Python p08/p16 · Python p29–p31 (forecast baselines) · Portfolio §2 |
 | Electronics = revenue, Fashion = profit (but 16% returns) | SQL Q13/Q17/Q19 · Portfolio §3 |
 | Referral customers are worth ~2.4x Paid Social ones | Python p25 · Portfolio §4 |
 | Cash on Delivery cancels ~3x more | SQL Q18 · Excel task 5 · Portfolio §5 |
@@ -98,12 +99,12 @@ JOBPREP_DA/
 │   ├── shopkart.db              # SQLite database (SQL practice)
 │   ├── clean/*.csv              # analysis-ready tables
 │   └── raw/*.csv                # messy exports (cleaning practice)
-├── study-guide/                 # 7 chapters
+├── study-guide/                 # 8 chapters
 ├── practice/
 │   ├── sql/                     # EXERCISES.md · my_answers/ · check.py · SOLUTIONS.md
 │   ├── python/                  # exercises.py · check.py · solutions.py · data_loader.py
 │   └── excel/                   # ShopKart_Excel_Practice.xlsx · build_workbook.py
-├── mock-interviews/             # interviewer scripts + rubrics (SQL, case, take-home, stats)
+├── mock-interviews/             # interviewer scripts + rubrics (SQL, case, take-home, stats, general interview Q&A)
 ├── portfolio/shopkart-growth-analysis/
 │   ├── README.md                # the case-study write-up
 │   ├── analysis.ipynb           # executed notebook
@@ -141,9 +142,10 @@ python website/build_site.py && mkdocs serve -f website/mkdocs.yml     # http://
 Once the workflows are activated ([`ci/README.md`](ci/README.md)), every push and pull request runs the test suite on **Linux, Windows and macOS** (Python 3.10–3.13):
 
 * the dataset matches its checksums and regenerates byte-for-byte;
-* all 60 SQL and 25 pandas reference solutions pass their graders, and the graders reject wrong answers
+* all 60 SQL and 31 pandas reference solutions pass their graders, and the graders reject wrong answers
   (wrong values, wrong row order, wrong column count);
 * the browser playground's grader passes all 60 practice and 19 mock-interview solutions inside **sql.js** (Node, headless);
+* the flashcards' search, session limits, active recall, empty state, keyboard flip, hide-known and confirmed-reset controls pass a Node smoke test;
 * every Excel Answer Key formula is evaluated by a formula engine and matches the expected answer;
 * the portfolio notebook executes top to bottom;
 * every relative link and `#anchor` in the markdown resolves, and the website builds with `--strict`.

@@ -6,8 +6,9 @@ hide:
 
 # Interview flashcards
 
-Rapid-fire revision of the conceptual questions from the study guide. Click the card (or press **Space**) to flip it;
-**← / →** move between cards. Cards you mark as known are remembered in this browser.
+Rapid-fire revision of the study-guide concepts and the model answers in the
+[40-question interview mock](../mock-interviews/07-interview-qa.md). Choose a chapter from the filter to focus your
+review. Filter by chapter, search questions and answers, or choose a 10- or 25-card session from the matching cards. Turn on **type answer first** for active recall before revealing the model answer. Click the card (or press **Space / Enter**) to flip it; **← / →** move between cards. Cards you mark as known are remembered in this browser; **Reset known** clears that progress after confirmation.
 
 <link rel="stylesheet" href="../assets/playground/playground.css">
 <div id="fc-app" data-src="flashcards.json">Loading cards… (JavaScript required)</div>
