@@ -1,4 +1,4 @@
-# Python / pandas practice: 28 graded exercises
+# Python / pandas practice: 31 graded exercises
 
 | Section | Exercises | Skills |
 |---|---|---|
@@ -7,6 +7,7 @@
 | C. Statistics | p19–p22 | two-proportion z-test + CI, segment analysis, IQR outliers, Welch t-test |
 | D. Putting it together | p23–p25 | market-basket pairs, hierarchy traversal, channel LTV |
 | E. API ingestion | p26–p28 | flatten paginated JSON, de-duplication, type coercion, ingestion validation report (cached fixture, no network) |
+| F. Forecasting & validation | p29–p31 | monthly aggregation, chronological holdout, seasonal-naive/trailing/drift-adjusted baselines, MAE comparison |
 
 ```bash
 # write your code in exercises.py (replace each `raise NotImplementedError`), then:

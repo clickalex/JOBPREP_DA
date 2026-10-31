@@ -1,5 +1,5 @@
 """
-Python / pandas practice — 28 exercises on the ShopKart data.
+Python / pandas practice — 31 exercises on the ShopKart data.
 
 HOW TO USE
   1. Replace each `raise NotImplementedError` with your solution.
@@ -256,4 +256,35 @@ def p28_validation_report(api_pages: list) -> dict:
       invalid_amounts  unique events whose amount is missing, doesn't parse to a
                        number, or is negative
       valid_records    unique events left with a valid (non-negative numeric) amount"""
+    raise NotImplementedError
+
+
+# =========================================================================== #
+# F. FORECASTING & VALIDATION  (chronological holdout, baseline comparison)
+# =========================================================================== #
+def p29_monthly_net_revenue(orders: pd.DataFrame, items: pd.DataFrame) -> pd.DataFrame:
+    """Net revenue of VALID orders (Delivered/Shipped; net = quantity*unit_price - discount)
+    aggregated by calendar month. Return [month, net_revenue] sorted by month ascending,
+    with month as the MONTH-END timestamp (datetime64) — 24 rows, Jan 2024 through Dec 2025."""
+    raise NotImplementedError
+
+
+def p30_seasonal_naive_mae(orders: pd.DataFrame, items: pd.DataFrame) -> float:
+    """Hold out the LAST 3 months of the monthly series (Oct-Dec 2025). Predict each
+    held-out month with the SAME calendar month one year earlier, using only the earlier
+    months (no peeking at the holdout). Return the mean absolute error over the 3
+    predictions, rounded to 2 decimals."""
+    raise NotImplementedError
+
+
+def p31_forecast_baselines(orders: pd.DataFrame, items: pd.DataFrame) -> dict:
+    """Same 3-month holdout as p30. Compare three simple forecasters by MAE:
+      seasonal_naive   same month one year earlier
+      trailing_mean    the mean of the last 3 TRAINING months (Jul-Sep 2025), applied flat
+      drift_adjusted   seasonal naive x a growth factor = the mean month-over-month
+                       year-on-year ratio (month / same month last year) over every
+                       TRAINING month whose prior-year month is also inside the training
+                       window
+    Return {"mae_seasonal_naive": x, "mae_trailing_mean": y, "mae_drift_adjusted": z,
+            "best": "<name of the lowest-MAE baseline>"}, MAEs rounded to 2 decimals."""
     raise NotImplementedError

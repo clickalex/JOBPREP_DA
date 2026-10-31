@@ -286,3 +286,38 @@ def p28_validation_report(api_pages):
     invalid = int(((amount.isna()) | (amount < 0)).sum())
     return {"total_records": total, "duplicate_ids": dupes,
             "invalid_amounts": invalid, "valid_records": len(uniq) - invalid}
+
+
+# ============================================== F. Forecasting & validation
+def _monthly_net(orders, items):
+    lines = _valid_lines(orders, items)
+    s = lines.groupby(lines["order_ts"].dt.to_period("M"))["net_revenue"].sum()
+    s.index = s.index.to_timestamp("M")
+    return s.sort_index()
+
+
+def p29_monthly_net_revenue(orders, items):
+    s = _monthly_net(orders, items)
+    return pd.DataFrame({"month": s.index, "net_revenue": s.values.round(2)}).reset_index(drop=True)
+
+
+def p30_seasonal_naive_mae(orders, items):
+    s = _monthly_net(orders, items)
+    train, test = s.iloc[:-3], s.iloc[-3:]
+    pred = s.shift(12).reindex(test.index)
+    return round(float((pred - test).abs().mean()), 2)
+
+
+def p31_forecast_baselines(orders, items):
+    s = _monthly_net(orders, items)
+    train, test = s.iloc[:-3], s.iloc[-3:]
+    seasonal = s.shift(12).reindex(test.index)
+    trailing = pd.Series(train.iloc[-3:].mean(), index=test.index)
+    ratios = [v / s[ts - pd.DateOffset(years=1)] for ts, v in train.items()
+              if (ts - pd.DateOffset(years=1)) in s.index]
+    drift = seasonal * float(np.mean(ratios))
+    maes = {"mae_seasonal_naive": round(float((seasonal - test).abs().mean()), 2),
+            "mae_trailing_mean": round(float((trailing - test).abs().mean()), 2),
+            "mae_drift_adjusted": round(float((drift - test).abs().mean()), 2)}
+    best = min(maes, key=maes.get).removeprefix("mae_")
+    return {**maes, "best": best}
